@@ -3,4 +3,4 @@ project(IMS_proj)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(IMS_proj main.cpp)
+add_executable(IMS_proj main.cpp CellularAutomata.cpp CellularAutomata.h logger.cpp logger.h)
