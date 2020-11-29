@@ -10,10 +10,8 @@ from matplotlib.animation import FuncAnimation
 
 class Map:
 
-
     lon = []
     lat = []
-    data = []
 
 
     def __init__(self,llon,llat,rlon,rlat):
@@ -25,9 +23,8 @@ class Map:
         self.rlat = rlat
 
     
-    def set_data(self,lon,lat,data):
-        """ Sets data, lon and lat attributes """
-        self.data = data
+    def set_data(self,lon,lat):
+        """ Sets lon and lat attributes """
         self.lon = lon
         self.lat = lat
 
@@ -52,32 +49,19 @@ class Map:
         return self.map
 
     
-    def add_oil(self,coord_lon, coord_lat,data):
-        """ Creates oil mesh. 
+    def add_oil(self,coord_lon, coord_lat):
+        """ Creates oil track. 
             Coord_lon is array of longtitude coordinates.
             Coord_lat is array of lattitude coordinates.
-            Data is matrix with values at given squares
-                - 0  : white 
-                - 10 : black
-                - else shades of greys
-            Data values must be vertically inverted. 
-            Colormesh prints only n-1 cols and rows.
         """
-        x = np.linspace(coord_lon[0],coord_lon[-1], data.shape[1])
-        y = np.linspace(coord_lat[0], coord_lat[0]+1, data.shape[0])
-
-        xx, yy = np.meshgrid(x, y)
-        
-        cm = plt.get_cmap('binary')
-        cm.set_under('white')
-
-        return self.map.pcolormesh(xx, yy, data,cmap=cm,vmin=0, vmax=10)
+        self.map.scatter(coord_lon, coord_lat, marker='.',cmap='Greys',alpha=0.5)
 
 
-    def show_map(self, show=True, save=None):
+    def show_map(self, show=True, save=None, animation=False):
         """ Plots map.
             Shows figure if show=True.
-            Saves map to given location in argument save 
+            Saves map to given location in argument save.
+            If animation True, creates animation.
         """
         if save:
             try:
@@ -89,6 +73,13 @@ class Map:
 
         if show:
             plt.show()
+
+        if animation:
+            fig = plt.figure()
+            animation = FuncAnimation(fig = fig, func = self.animate, 
+                           frames=3, interval=500, repeat = True, blit=False)
+
+            animation.save('simulation.gif',writer='imagemagick',dpi=600) 
 
     
     def animate(self,i):
@@ -115,37 +106,9 @@ if __name__ == "__main__":
 
     lon = np.reshape(lon,(-1,10))
     lat = np.reshape(lat,(-1,10))
-    """data = np.array([
-            [9.21954446, 8.60232527, 8.06225775, 7.61577311, 7.28010989,
-            7.07106781, 7.07106781 , 7.07106781, 7.28010989, 7.61577311],
-        [8.48528137, 7.81024968, 7.21110255, 6.70820393, 6.32455532,
-            6.08276253, 6.        , 6.08276253, 6.32455532, 6.70820393],
-        [7.81024968, 7.07106781, 6.40312424, 5.83095189, 5.38516481,
-            5.09901951, 5.        , 5.09901951, 5.38516481, 5.83095189],
-        [7.21110255, 6.40312424, 5.65685425, 5.38516481, 4.47213595,
-            4.12310563, 4.        , 4.12310563, 4.47213595, 5.        ],
-        [6.70820393, 5.83095189, 5.        , 4.24264069, 3.60555128,
-            3.16227766, 3.        , 3.16227766, 3.60555128, 4.24264069],
-        [6.32455532, 5.38516481, 4.47213595, 3.60555128, 2.82842712,
-            2.23606798, 2.        , 2.23606798, 2.82842712, 3.60555128],
-        [6.08276253, 5.09901951, 4.12310563, 3.16227766, 2.23606798,
-            1.41421356, 1.41421356, 1.41421356, 2.23606798, 3.16227766],
-        [6.        , 5.        , 4.        , 3.        , 2.        ,
-            1.        , 0.        , 1.        , 2.        , 3.        ],
-        [6.08276253, 5.09901951, 4.12310563, 3.16227766, 2.23606798,
-            1.41421356, 1.        , 1.41421356, 2.23606798, 3.16227766],
-        [6.32455532, 5.38516481, 4.47213595, 3.60555128, 2.82842712,
-            2.23606798, 2.        , 2.23606798, 2.82842712, 3.60555128]])"""
 
-
-    Map.set_data(lon,lat,None)
-
-
+    Map.set_data(lon,lat)
+    Map.add_oil(lon[0],lat[0])
     
-    fig = plt.figure()
     
-    animation = FuncAnimation(fig = fig, func = Map.animate, 
-                           frames=3, interval=500, repeat = True, blit=False)
-
-    animation.save('simulation.gif',writer='imagemagick',dpi=600) 
-    #Map.show_map()
+    Map.show_map(animation=True)
