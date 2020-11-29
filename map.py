@@ -5,9 +5,15 @@ import matplotlib.pyplot as plt
 from matplotlib import colors as c
 import matplotlib as m
 from celluloid import Camera
+from matplotlib.animation import FuncAnimation
 
 
 class Map:
+
+
+    lon = []
+    lat = []
+    data = []
 
 
     def __init__(self,llon,llat,rlon,rlat):
@@ -18,6 +24,13 @@ class Map:
         self.llat = llat
         self.rlon = rlon
         self.rlat = rlat
+
+    
+    def set_data(self,lon,lat,data):
+        """ Sets data, lon and lat attributes """
+        self.data = data
+        self.lon = lon
+        self.lat = lat
 
 
     def draw_map(self, paralles=None, meridians=None):
@@ -40,9 +53,16 @@ class Map:
 
     
     def add_oil(self,coord_lon, coord_lat,data):
-
-        #10 cierna, 0 biela, kresli sa zdola hore a vykresluje iba n-1 teda jeden riadok a stlpec sa vynechava
-        
+        """ Creates oil mesh. 
+            Coord_lon is array of longtitude coordinates.
+            Coord_lat is array of lattitude coordinates.
+            Data is matrix with values at given squares
+                - 0  : white 
+                - 10 : black
+                - else shades of greys
+            Data values must be vertically inverted. 
+            Colormesh prints only n-1 cols and rows.
+        """
 
         x = np.linspace(coord_lon[0],coord_lon[-1], data.shape[1])
         y = np.linspace(coord_lat[0], coord_lat[0]+1, data.shape[0])
@@ -72,38 +92,32 @@ class Map:
             plt.show()
 
     
-    def animate(self,start,frames,data):
-        """ Creates animation from starting point = start. Creates N frames. """
-
-        fig = plt.figure()
+    def animate(self,i):
+        """ Creates animation from array of data """
         
-        camera = Camera(fig)
-        for i in range(frames):
-            self.draw_map()
-            #TODO upravit parametre
-            lon = np.arange(start+i,start+i+1,0.1)
-            lat = np.repeat(37., 10)
-            self.add_oil(lon,lat,data) 
-            plt.plot()
-            camera.snap()
+        if i == 1:
+            print('Generating animation...')
 
-        animation = camera.animate(interval=500)
-        animation.save('simulation.gif', writer = 'imagemagick')
+        plt.clf()
+        self.draw_map()
+        self.add_oil(lon[i],lat[i],data) 
+
+        return plt
         
-
-        
-
-
 
 
 if __name__ == "__main__":
     Map = Map(132.56575702690475, 35.19266414615366, 139.6409525751002, 40.84789071506689)
     Map.draw_map()
-    lon = np.arange(135.,136., 0.1)
-    lat = np.repeat(37., 10)
+
+    # example data
+    lon = np.arange(135.,138., 0.1)
+    lat = np.repeat(37., 30)
+    lon = np.reshape(lon,(-1,10))
+    lat = np.reshape(lat,(-1,10))
     data = np.array([
             [9.21954446, 8.60232527, 8.06225775, 7.61577311, 7.28010989,
-            7.07106781, 0.        , 7.07106781, 7.28010989, 7.61577311],
+            7.07106781, 7.07106781 , 7.07106781, 7.28010989, 7.61577311],
         [8.48528137, 7.81024968, 7.21110255, 6.70820393, 6.32455532,
             6.08276253, 6.        , 6.08276253, 6.32455532, 6.70820393],
         [7.81024968, 7.07106781, 6.40312424, 5.83095189, 5.38516481,
@@ -122,7 +136,14 @@ if __name__ == "__main__":
             1.41421356, 1.        , 1.41421356, 2.23606798, 3.16227766],
         [6.32455532, 5.38516481, 4.47213595, 3.60555128, 2.82842712,
             2.23606798, 2.        , 2.23606798, 2.82842712, 3.60555128]])
-    Map.add_oil(lon,lat,data)
+
+
+    Map.set_data(lon,lat,data)
     
-    Map.animate(135.,3,data)
+    fig = plt.figure()
+    
+    animation = FuncAnimation(fig = fig, func = Map.animate, 
+                           frames=3, interval=500, repeat = True, blit=False)
+
+    animation.save('simulation.gif',writer='imagemagick') 
     #Map.show_map()
