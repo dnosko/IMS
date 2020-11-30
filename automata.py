@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 
 class Automata:
 
@@ -21,9 +22,17 @@ class Automata:
 
     
     def print_grid(self):
-        #neighbors = self.get_neighbors([4,4])
-        #for x,y in neighbors:
-        #    self.grid[x,y] = 1
+        """neighbors = self.get_neighbors([4,4])
+
+        for x,y in neighbors:
+            if x == -1 or y == -1:
+                continue
+            # side neighbors
+            try:
+                self.grid[x,y] = 1
+            except IndexError:
+                continue """
+
         print(self.grid)
 
 
@@ -32,20 +41,41 @@ class Automata:
         row, column = coordinates
 
         neighbors = []
-        if row != 0:
-            neighbors.append([row-1, column]) #top
-        if column != 0:
-            neighbors.append([row, column-1]) #left
-        if column != self.columns-1:
-            neighbors.append([row, column+1]) #right
-        if row != self.rows-1:
-            neighbors.append([row+1, column]) # bottom
-
+        neighbors.append([row-1, column]) #top
+        neighbors.append([row, column-1]) #left
+        neighbors.append([row, column+1]) #right
+        neighbors.append([row+1, column]) # bottom
+        
         return neighbors
 
 
     def nextGeneration(self):
-        pass
+        """ Creates new generation based on rules """
+        newgen = copy.deepcopy(self.grid)
+        for x in range(self.rows):
+            for y in range(self.columns):
+                newgen[x,y] = self.rules(self.get_neighbors([x,y]))
+        
+        self.grid = newgen
+
+    
+    def rules(self, neighborhood):
+        
+        sum = 0
+        for x,y in neighborhood:
+            # side neighbors
+            if x == -1 or x > self.rows-1 or y == -1 or y > self.columns-1:
+                continue
+        #just some test rules for now
+            if self.grid[x,y] == 10:
+                sum = sum + 1
+        
+        if sum > 2:
+            return 10
+        if sum == 1:
+            return 5
+        else:
+            return 0
     
 
 
@@ -53,3 +83,6 @@ if __name__ == "__main__":
     ca = Automata(5,5)
     ca.init_oil([1,1,3,3])
     ca.print_grid()
+    for i in range(5):
+        ca.nextGeneration()
+        ca.print_grid()
