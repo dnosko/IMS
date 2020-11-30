@@ -1,5 +1,6 @@
 import numpy as np
 import copy
+from map import Map
 
 class Automata:
 
@@ -32,8 +33,7 @@ class Automata:
                 self.grid[x,y] = 1
             except IndexError:
                 continue """
-
-        print(self.grid)
+        print(self.grid[::-1])
 
 
     def get_neighbors(self,coordinates):
@@ -49,7 +49,7 @@ class Automata:
         return neighbors
 
 
-    def nextGeneration(self):
+    def next_generation(self):
         """ Creates new generation based on rules """
         newgen = copy.deepcopy(self.grid)
         for x in range(self.rows):
@@ -67,22 +67,55 @@ class Automata:
             if x == -1 or x > self.rows-1 or y == -1 or y > self.columns-1:
                 continue
         #just some test rules for now
-            if self.grid[x,y] == 10:
+            if self.grid[x,y] > 0:
                 sum = sum + 1
         
-        if sum > 2:
-            return 10
-        if sum == 1:
+        if sum > 7:
+            return 9
+        if sum > 5:
             return 5
+        if sum > 2:
+            return 3
+        if sum > 0:
+            return 1
         else:
             return 0
     
+    def swap_rows(self):
+
+        return self.grid[::-1]
+
+    def make_animation(self,data):
+        #draw animation
+    
+        map = Map(132.56575702690475, 35.19266414615366, 139.6409525751002, 40.84789071506689)
+        map.draw_map()
+        # example data
+        lon = np.arange(135.,137., 0.04)
+        lat = np.repeat(37., 50)
+
+        lon = np.reshape(lon,(-1,10))
+        lat = np.reshape(lat,(-1,10))
+
+        map.set_data(lon,lat,data)
+        #Map.add_oil(lon[0],lat[0],data)
+        
+        
+        map.show_map(show=False,animation=5) 
 
 
 if __name__ == "__main__":
-    ca = Automata(5,5)
-    ca.init_oil([1,1,3,3])
-    ca.print_grid()
+    ca = Automata(10,10)
+    ca.init_oil([1,1,4,4])
+    #ca.print_grid()
+    #data = np.empty((10,10))
+    data = ca.swap_rows()
+    
     for i in range(5):
-        ca.nextGeneration()
-        ca.print_grid()
+        ca.next_generation()
+        data = np.append(data,ca.swap_rows())
+    
+    data=np.reshape(data,(-1,10,10))
+    
+    ca.make_animation(data)
+    
