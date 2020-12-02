@@ -5,7 +5,7 @@ import numpy as np
 import seaborn as sns
 import contextily as ctx
 import logging
-from shapely.geometry import LineString
+from shapely.geometry import LineString, Point
 from shapely.ops import unary_union, transform
 import os
 from skimage.draw import line_aa
@@ -95,20 +95,29 @@ def get_area_info(bounds) -> tuple:
     return shape, min_max
 
 
-def transform_deg_to_km(gf):
+def shapely_deg_to_km(x, y, z=None):
     """
     Latitude: 1 deg = 110.574
     Longtitude: 1 deg = 111.320 * cos(Latitude)
     x` = 111.320 * cos(y) * km
     y` = 110.574 * y km
     """
+    return (111.320 * np.cos(np.deg2rad(y)) * x) / ca_scale, (110.574 * y) / ca_scale
 
-    def shapely_deg_to_km(x, y, z=None):
-        return (111.320 * np.cos(np.deg2rad(y)) * x) / ca_scale, (110.574 * y) / ca_scale
 
-    def pandas_deg_to_km(line_string: LineString):
-        return transform(shapely_deg_to_km, line_string)
+def pandas_deg_to_km(line_string: LineString):
+    return transform(shapely_deg_to_km, line_string)
 
+
+def point_to_cell(lon, lat):
+    """
+    Returns x and y index in CA grid from longtitude and latitude
+    """
+    p = Point(lon, lat).CRS(crs)
+    return transform(shapely_deg_to_km, p)
+
+
+def transform_deg_to_km(gf):
     return gf.apply(pandas_deg_to_km)
 
 

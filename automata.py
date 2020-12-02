@@ -1,6 +1,7 @@
 import numpy as np
 import copy
 from map import Map
+import timeit
 
 
 class Automata:
@@ -149,13 +150,13 @@ class Automata:
 
 
 if __name__ == "__main__":
-    ca = Automata(10, 10)
+    ca = Automata(800, 600)
     data = ca.init_oil([1, 1, 4, 4])
     # ca.print_grid()
     data = ca.swap_rows()
 
-    for i in range(5):
-        ca.next_generation()
-        data = np.append(data, ca.swap_rows())
-    print(data)
-    ca.make_animation(data)
+    # for i in range(5):
+    #     ca.next_generation()
+    #     data = np.append(data, ca.swap_rows())
+    # print(data)
+    # ca.make_animation(data)
