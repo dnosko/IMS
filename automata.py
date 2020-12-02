@@ -3,11 +3,21 @@ import copy
 from map import Map
 
 class Automata:
+    """ neighboorhood order
+        NW N WE    4 0 5
+        W  X E   = 1 X 2
+        SW S SE    6 3 7
+    """
 
     max_mass = 7.9  #max kg mass of oil
+    water = 0.0
+
     #constants
     m = 0.098  #spreading in the four adjacent cells
     d = 0.0176  #spreading constant for diagonal cells
+    wind_dict = {"NW": None,"N":([1,2,3],[6,7]), "NE": None, "W": ([0,2,3],[5,7]),
+                 "E": ([0,1,3],[4,6]),"SW": None,"S": ([0,1,2],[4,5]),"SE": None,
+                 "NOWIND":([0,1,2,3],[4,5,6,7])}
     
     def __init__(self,x,y):
         """ Inits grid of cellular automata to x,y shape """
@@ -58,29 +68,46 @@ class Automata:
         return neighbors
 
 
-    def next_generation(self):
-        """ Creates new generation based on rules """
+    def next_generation(self,direction='NOWIND'):
+        """ Creates new generation based on wind direction. 
+            Direction must be string from this list: NW,W,NE,W,E,SW,S,SE,NOWIND.
+            Implicitly set to NOWIND.
+        """
+
+        self.wind = direction
+
         newgen = copy.deepcopy(self.grid)
         for x in range(self.rows):
             for y in range(self.columns):
                 newgen[x,y] = self.__rules(self.get_neighbors([x,y]), self.grid[x,y])
-        
+
         self.grid = newgen
 
     
     def __rules(self, neighborhood, actual_cell):
 
-        adj_cells, diag_cells = self.__no_wind(neighborhood,actual_cell)
+        new_mass =  self.__wind(neighborhood,actual_cell)
+        if new_mass > self.max_mass:
+            print('change####################################################')
+            new_mass = self.max_mass
+        elif new_mass < self.water:
+            new_mass = self.water
 
-        return actual_cell + self.m * adj_cells + self.d * diag_cells
+        return new_mass
 
 
-    def __no_wind(self,neighborhood,actual_cell):
+    def __wind(self,neighborhood,actual_cell):
+        """ Returns new value of cell, when wind is taken into consideration. 
+        """
+
         adj_cells = 0
         diag_cells = 0
-
+        
+        adj_list = [neighborhood[x] for x in self.wind_dict[self.wind][0]]
+        dig_list = [neighborhood[x] for x in self.wind_dict[self.wind][1]]
+        
         #adjacent cells
-        for x,y in neighborhood[:4]:
+        for x,y in adj_list:
             # side neighbors
             if x == -1 or x > self.rows-1 or y == -1 or y > self.columns-1:
                 adj_cells = - actual_cell
@@ -89,7 +116,7 @@ class Automata:
             adj_cells = adj_cells + (self.grid[x,y] - actual_cell)
         
         #diagonal cells
-        for x,y in neighborhood[4:]:
+        for x,y in dig_list:
             if x == -1 or x > self.rows-1 or y == -1 or y > self.columns-1:
                 diag_cells = - actual_cell
                 continue
@@ -97,8 +124,8 @@ class Automata:
             diag_cells = diag_cells + (self.grid[x,y] - actual_cell)
 
         
-        return adj_cells, diag_cells
-        
+        return actual_cell + self.m * adj_cells + self.d * diag_cells
+
 
     def swap_rows(self):
 
@@ -138,7 +165,6 @@ if __name__ == "__main__":
     for i in range(5):
         ca.next_generation()
         data = np.append(data,ca.swap_rows())
-    #print(data)
-    
+    print(data)
     ca.make_animation(data)
     
