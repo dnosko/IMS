@@ -1,17 +1,13 @@
-import geopandas
-import pandas as pd
+import logging
+import os
+
+import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
-import contextily as ctx
-import logging
+import pandas as pd
 from shapely.geometry import LineString, Point
 from shapely.ops import unary_union, transform
-import os
 from skimage.draw import line_aa
-import timeit
-import sys
-from multiprocessing import Pool, Process
 
 """
 (type=boundary and  boundary=administrative and admin_level=2) in "Japan"
@@ -49,7 +45,7 @@ def clear_original_dataset(area="Japan"):
     orig_df = None
     file_name = original_file.format(area)
     try:
-        orig_df = geopandas.read_file(file_name)
+        orig_df = gpd.read_file(file_name)
     except OSError or IOError:
         logging.error(f'Can not open file {file_name}')
         exit(1)
@@ -74,10 +70,10 @@ def clear_original_dataset(area="Japan"):
                             & ((df_concat['maxx'] < 136.7) | (df_concat['maxy'] > 36))]
 
     # merge overlapping lines
-    multiline_gs = geopandas.GeoSeries(unary_union(filtered_df['geometry']))
+    multiline_gs = gpd.GeoSeries(unary_union(filtered_df['geometry']))
 
     # split to lines
-    lines_gf = geopandas.GeoDataFrame(geometry=list(multiline_gs.iloc[0]))
+    lines_gf = gpd.GeoDataFrame(geometry=list(multiline_gs.iloc[0]))
 
     # save result
     lines_gf.to_file(cleaned_file.format(area), driver='GeoJSON')
@@ -113,8 +109,10 @@ def point_to_cell(lon, lat):
     """
     Returns x and y index in CA grid from longtitude and latitude
     """
-    p = Point(lon, lat).CRS(crs)
-    return transform(shapely_deg_to_km, p)
+    p = Point(lon, lat)
+    gdf = gpd.GeoDataFrame(geometry=[p, ], crs=crs)
+    t = transform(shapely_deg_to_km, gdf.iloc[0, 0])
+    return t.xy[0][0], t.xy[1][0]
 
 
 def transform_deg_to_km(gf):
@@ -145,7 +143,7 @@ def get_cleaned_dataset(area="Japan"):
     if not os.path.isfile(file_name):
         return clear_original_dataset(area)
     else:
-        return geopandas.read_file(file_name)
+        return gpd.read_file(file_name)
 
 
 def get_ca_borders(area='Japan') -> pd.DataFrame:
@@ -171,8 +169,8 @@ def get_ca_borders(area='Japan') -> pd.DataFrame:
 
 if __name__ == "__main__":
     df = get_ca_borders('Japan')
-    points = geopandas.GeoDataFrame(df,
-                                    geometry=geopandas.points_from_xy(df['x'], df['y']))
+    points = gpd.GeoDataFrame(df,
+                              geometry=gpd.points_from_xy(df['x'], df['y']))
     fig, ax = plt.subplots(1, 1, figsize=(20, 15))
     points.plot()
 
