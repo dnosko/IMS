@@ -46,13 +46,13 @@ class Automata:
         row, column = coordinates
 
         neighbors = []
-        neighbors.append([row-1,column-1]) #top left
         neighbors.append([row-1, column]) #top
-        neighbors.append([row-1,column+1]) #top right
         neighbors.append([row, column-1]) #left
         neighbors.append([row, column+1]) #right
-        neighbors.append([row+1,column-1]) #bottom left
         neighbors.append([row+1, column]) # bottom
+        neighbors.append([row-1,column-1]) #top left
+        neighbors.append([row-1,column+1]) #top right
+        neighbors.append([row+1,column-1]) #bottom left
         neighbors.append([row+1,column+1]) #bottom rught
 
         return neighbors
@@ -63,20 +63,41 @@ class Automata:
         newgen = copy.deepcopy(self.grid)
         for x in range(self.rows):
             for y in range(self.columns):
-                newgen[x,y] = self.rules(self.get_neighbors([x,y]), self.grid[x,y])
+                newgen[x,y] = self.__rules(self.get_neighbors([x,y]), self.grid[x,y])
         
         self.grid = newgen
 
     
-    def rules(self, neighborhood, actual_cell):
-        
-        for x,y in neighborhood:
+    def __rules(self, neighborhood, actual_cell):
+
+        adj_cells, diag_cells = self.__no_wind(neighborhood,actual_cell)
+
+        return actual_cell + self.m * adj_cells + self.d * diag_cells
+
+
+    def __no_wind(self,neighborhood,actual_cell):
+        adj_cells = 0
+        diag_cells = 0
+
+        #adjacent cells
+        for x,y in neighborhood[:4]:
             # side neighbors
             if x == -1 or x > self.rows-1 or y == -1 or y > self.columns-1:
+                adj_cells = - actual_cell
                 continue
 
+            adj_cells = adj_cells + (self.grid[x,y] - actual_cell)
         
-        return new_mass
+        #diagonal cells
+        for x,y in neighborhood[4:]:
+            if x == -1 or x > self.rows-1 or y == -1 or y > self.columns-1:
+                diag_cells = - actual_cell
+                continue
+
+            diag_cells = diag_cells + (self.grid[x,y] - actual_cell)
+
+        
+        return adj_cells, diag_cells
         
 
     def swap_rows(self):
@@ -89,7 +110,7 @@ class Automata:
 
         #reshape to 3D matrix
         data=np.reshape(data,(-1,10,10)) 
-        #TODO swap rows
+        
     
         map = Map(132.56575702690475, 35.19266414615366, 139.6409525751002, 40.84789071506689)
         map.draw_map()
@@ -111,11 +132,13 @@ if __name__ == "__main__":
     ca = Automata(10,10)
     data = ca.init_oil([1,1,4,4])
     #ca.print_grid()
+    data = ca.swap_rows()
     
     
     for i in range(5):
         ca.next_generation()
         data = np.append(data,ca.swap_rows())
+    #print(data)
     
     ca.make_animation(data)
     
