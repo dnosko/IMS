@@ -89,8 +89,6 @@ class Automata:
         new_mass = self.__wind(neighborhood, actual_cell)
         if new_mass > self.max_mass:
             new_mass = self.max_mass
-        elif new_mass < self.water:
-            new_mass = self.water
 
         return new_mass
 
@@ -135,27 +133,28 @@ class Automata:
         data=np.reshape(data,(-1, self.rows, self.columns)) 
         
         map = Map(132.56575702690475, 35.19266414615366, 139.6409525751002, 40.84789071506689)
-        map.draw_map()
+        #map.draw_map()
         # example data
-        lon = np.arange(135., 137., 0.04)
-        lat = np.repeat(37., 50)
+        #lon = np.arange(0, self.rows)
+        #lat = np.repeat(0, self.columns)
 
-        lon = np.reshape(lon,(-1, self.rows))
-        lat = np.reshape(lat,(-1, self.columns))
-
-        map.set_data(lon, lat, data)
+        # lon = np.reshape(lon,(-1, self.rows))
+        # lat = np.reshape(lat,(-1, self.columns))
+        #print(lon,lat)
+        
+        map.set_data(self.rows, self.columns, data)
         #Map.add_oil(lon[0],lat[0],data)
         
-        map.add_oil(lon[1], lat[1], data[1]) 
-        map.show_map(show=True, animation=N)
+        map.add_oil(self.rows, self.columns, data) 
+        map.show_map(show=True)
 
 
     def get_N_generations(self, N, direction):
         """ Makes N generations of CA. """
-        data = self.swap_rows()
+        data = self.grid
         for i in range(N):
-            ca.next_generation(direction)
-            data = np.append(data,ca.swap_rows())
+            self.next_generation(direction)
+            data = np.append(data,self.grid)
 
         return data
 
@@ -168,5 +167,5 @@ if __name__ == "__main__":
     ca = Automata(10,10)
     data = ca.init_oil([1,1,4,4])
     #ca.print_grid()
-    data = ca.get_N_generations(5,'E')
+    data = ca.get_N_generations(0,'E')
     ca.make_animation(data,0)
