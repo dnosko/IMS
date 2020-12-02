@@ -57,6 +57,7 @@ class Map:
             plt.savefig(output_path, dpi=800)
 
         if show:
+            self.add_oil(self.data[0])
             plt.show()
 
         if animation:

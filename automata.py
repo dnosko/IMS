@@ -44,7 +44,14 @@ class Automata:
     def init_borders(self, x, y):
         for i in range(len(x)):
             self.grid[x[i]][y[i]] = self.border
-
+        
+        #flip and rotate matrix
+        self.grid = np.flipud(self.grid)
+        self.grid = np.rot90(self.grid,3)
+        #swap columns and rows
+        cols = self.columns
+        self.columns = self.rows
+        self.rows = cols
 
     def print_grid(self):
         print (self.grid)
@@ -79,7 +86,7 @@ class Automata:
         for x in range(self.rows):
             for y in range(self.columns):
                 if self.grid[x,y] == self.border:
-                    continue
+                        continue
                 newgen[x, y] = self.__rules(self.get_neighbors([x, y]), self.grid[x, y])
 
         self.grid = newgen
@@ -111,7 +118,10 @@ class Automata:
             if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x,y] == self.border:
                 adj_cells = - actual_cell
             else:
-                adj_cells += (self.grid[x, y] - actual_cell)
+                try:    
+                    adj_cells += (self.grid[x, y] - actual_cell)
+                except IndexError:
+                    print(self.rows,self.columns,x,y)
 
         # diagonal cells
         for x, y in dig_list:
@@ -136,7 +146,7 @@ class Automata:
 
         map = Map(self.rows, self.columns, data)
 
-        map.show_map(show=False, animation=N)
+        map.show_map(show=True,animation=N)
 
 
     def get_N_generations(self, N, direction="NOWIND"):
