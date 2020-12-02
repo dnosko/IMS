@@ -88,7 +88,6 @@ class Automata:
 
         new_mass =  self.__wind(neighborhood,actual_cell)
         if new_mass > self.max_mass:
-            print('change####################################################')
             new_mass = self.max_mass
         elif new_mass < self.water:
             new_mass = self.water
@@ -132,39 +131,46 @@ class Automata:
         return self.grid[::-1]
 
 
-    def make_animation(self,data):
-        #draw animation
+    def make_animation(self,data,N):
+        """ Makes animation from data with N frames. """"
 
-        #reshape to 3D matrix
-        data=np.reshape(data,(-1,10,10)) 
+        # reshape to 3D matrix
+        data=np.reshape(data,(-1,self.rows,self.columns)) 
         
-    
         map = Map(132.56575702690475, 35.19266414615366, 139.6409525751002, 40.84789071506689)
         map.draw_map()
         # example data
         lon = np.arange(135.,137., 0.04)
         lat = np.repeat(37., 50)
 
-        lon = np.reshape(lon,(-1,10))
-        lat = np.reshape(lat,(-1,10))
+        lon = np.reshape(lon,(-1,self.rows))
+        lat = np.reshape(lat,(-1,self.columns))
 
         map.set_data(lon,lat,data)
         #Map.add_oil(lon[0],lat[0],data)
         
-        
-        map.show_map(show=False,animation=5) 
+        map.add_oil(lon[1], lat[1],data[1]) 
+        map.show_map(show=False, animation=N)
+
+
+    def get_N_generations(self, N, direction):
+        """ Makes N generations of CA. """
+        data = self.swap_rows()
+        for i in range(N):
+            ca.next_generation(direction)
+            data = np.append(data,ca.swap_rows())
+
+        return data
 
 
 if __name__ == "__main__":
+    #actual value 120,120 = 600*600 km
+    #tanker position = 133 52' East,Latitude 37 10' North
+    #5000–6500 m3  of oil spill
+
     ca = Automata(10,10)
     data = ca.init_oil([1,1,4,4])
     #ca.print_grid()
-    data = ca.swap_rows()
-    
-    
-    for i in range(5):
-        ca.next_generation()
-        data = np.append(data,ca.swap_rows())
-    print(data)
+    data = ca.get_N_generations(5,'E')
     ca.make_animation(data)
     
