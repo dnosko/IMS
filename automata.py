@@ -11,7 +11,7 @@ class Automata:
         SW S SE    6 3 7
     """
 
-    max_mass = 7.9  # max kg mass of oil
+    max_mass = 5000  # max kg mass of oil
     water = 0.0
     border = -1.0
 
@@ -144,7 +144,7 @@ class Automata:
         # reshape to 3D matrix
         data = np.reshape(data, (-1, self.rows, self.columns))
 
-        map = Map(self.rows, self.columns, data)
+        map = Map(self.rows, self.columns, data,self.max_mass)
 
         map.show_map(show=True,animation=N)
 

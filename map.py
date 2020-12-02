@@ -10,7 +10,7 @@ from matplotlib.animation import FuncAnimation
 
 class Map:
 
-    def __init__(self, max_rows, max_columns, data):
+    def __init__(self, max_rows, max_columns, data,max_mass):
         """Class constructor."""
         self.data = data
 
@@ -21,6 +21,7 @@ class Map:
         
 
         self.xx, self.yy = np.meshgrid(x, y)
+        self.max_mass = max_mass
         
 
     def add_oil(self, data):
@@ -34,7 +35,7 @@ class Map:
         cm = plt.get_cmap('binary')
         cm.set_under('green')
 
-        return plt.pcolormesh(self.xx, self.yy, data, cmap=cm, vmin=0, vmax=7.9)
+        return plt.pcolormesh(self.xx, self.yy, data, cmap=cm, vmin=0, vmax=self.max_mass)
 
 
     def show_map(self, show=True, save=None, animation=False):
