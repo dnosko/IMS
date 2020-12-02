@@ -4,7 +4,10 @@ from map import Map
 
 class Automata:
 
-    max_concentration = 10 #max number of oil particles
+    max_mass = 7.9  #max kg mass of oil
+    #constants
+    m = 0.098  #spreading in the four adjacent cells
+    d = 0.0176  #spreading constant for diagonal cells
     
     def __init__(self,x,y):
         """ Inits grid of cellular automata to x,y shape """
@@ -19,7 +22,9 @@ class Automata:
         
         for x in range(x1,x2+1):
             for y in range(y1,y2+1):
-                self.grid[x,y] = self.max_concentration
+                self.grid[x,y] = self.max_mass
+
+        return self.grid
 
     
     def print_grid(self):
@@ -41,11 +46,15 @@ class Automata:
         row, column = coordinates
 
         neighbors = []
+        neighbors.append([row-1,column-1]) #top left
         neighbors.append([row-1, column]) #top
+        neighbors.append([row-1,column+1]) #top right
         neighbors.append([row, column-1]) #left
         neighbors.append([row, column+1]) #right
+        neighbors.append([row+1,column-1]) #bottom left
         neighbors.append([row+1, column]) # bottom
-        
+        neighbors.append([row+1,column+1]) #bottom rught
+
         return neighbors
 
 
@@ -54,39 +63,33 @@ class Automata:
         newgen = copy.deepcopy(self.grid)
         for x in range(self.rows):
             for y in range(self.columns):
-                newgen[x,y] = self.rules(self.get_neighbors([x,y]))
+                newgen[x,y] = self.rules(self.get_neighbors([x,y]), self.grid[x,y])
         
         self.grid = newgen
 
     
-    def rules(self, neighborhood):
+    def rules(self, neighborhood, actual_cell):
         
-        sum = 0
         for x,y in neighborhood:
             # side neighbors
             if x == -1 or x > self.rows-1 or y == -1 or y > self.columns-1:
                 continue
-        #just some test rules for now
-            if self.grid[x,y] > 0:
-                sum = sum + 1
+
         
-        if sum > 7:
-            return 9
-        if sum > 5:
-            return 5
-        if sum > 2:
-            return 3
-        if sum > 0:
-            return 1
-        else:
-            return 0
-    
+        return new_mass
+        
+
     def swap_rows(self):
 
         return self.grid[::-1]
 
+
     def make_animation(self,data):
         #draw animation
+
+        #reshape to 3D matrix
+        data=np.reshape(data,(-1,10,10)) 
+        #TODO swap rows
     
         map = Map(132.56575702690475, 35.19266414615366, 139.6409525751002, 40.84789071506689)
         map.draw_map()
@@ -106,16 +109,13 @@ class Automata:
 
 if __name__ == "__main__":
     ca = Automata(10,10)
-    ca.init_oil([1,1,4,4])
+    data = ca.init_oil([1,1,4,4])
     #ca.print_grid()
-    #data = np.empty((10,10))
-    data = ca.swap_rows()
+    
     
     for i in range(5):
         ca.next_generation()
         data = np.append(data,ca.swap_rows())
-    
-    data=np.reshape(data,(-1,10,10))
     
     ca.make_animation(data)
     
