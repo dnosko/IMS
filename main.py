@@ -8,8 +8,10 @@ import logging
 from shapely.geometry import LineString
 from shapely.ops import unary_union, transform
 import os
+from skimage.draw import line_aa
 import timeit
 import sys
+from multiprocessing import Pool, Process
 
 """
 (type=boundary and  boundary=administrative and admin_level=2) in "Japan"
@@ -37,6 +39,7 @@ areas = ['Japan', 'Mexico']
 
 original_file = os.path.join(data_folder, '{}.geojson')
 cleaned_file = os.path.join(data_folder, '{}_cleaned.geojson')
+grid_file = os.path.join(data_folder, '{}_grid.geojson')
 
 ca_scale = 5.0
 crs = 'EPSG:4326'
@@ -58,7 +61,10 @@ def clear_original_dataset(area="Japan"):
     orig_df = orig_df[['geometry', 'id']]
 
     # simplify lines => smaller size
-    orig_df['geometry'] = orig_df.simplify(0.001)
+    orig_df['geometry'] = orig_df.simplify(0.1)
+
+    # to crs
+    orig_df.to_crs(crs)
 
     # desired area only
     df_bounds = orig_df['geometry'].bounds
@@ -70,10 +76,13 @@ def clear_original_dataset(area="Japan"):
     # merge overlapping lines
     multiline_gs = geopandas.GeoSeries(unary_union(filtered_df['geometry']))
 
-    # save result
-    multiline_gs.to_file(cleaned_file.format(area), driver='GeoJSON')
+    # split to lines
+    lines_gf = geopandas.GeoDataFrame(geometry=list(multiline_gs.iloc[0]))
 
-    return filtered_df
+    # save result
+    lines_gf.to_file(cleaned_file.format(area), driver='GeoJSON')
+
+    return lines_gf
 
 
 def get_area_info(bounds):
@@ -86,7 +95,7 @@ def get_area_info(bounds):
     return shape, min_max
 
 
-def transform_deg_to_km(df):
+def transform_deg_to_km(gf):
     """
     Latitude: 1 deg = 110.574
     Longtitude: 1 deg = 111.320 * cos(Latitude)
@@ -95,62 +104,57 @@ def transform_deg_to_km(df):
     """
 
     def shapely_deg_to_km(x, y, z=None):
-        return ((111.320 * np.cos(np.deg2rad(y)) * x) / ca_scale, (110.574 * y) / ca_scale)
+        return (111.320 * np.cos(np.deg2rad(y)) * x) / ca_scale, (110.574 * y) / ca_scale
 
     def pandas_deg_to_km(line_string: LineString):
         return transform(shapely_deg_to_km, line_string)
 
-    return df.apply(pandas_deg_to_km)
+    return gf.apply(pandas_deg_to_km)
 
 
-def cross_cover(points, df):
-    bnd = df.buffer(0.5)
-    print(sys.getsizeof(bnd))
+def lines_to_points(gf):
+    def pandas_draw_line(line_string: LineString):
+        to_int = lambda n: int(n + 0.5)
+        x, y = line_string.xy
+        return list(line_aa(to_int(x[i]), to_int(y[i]), to_int(x[i + 1]), to_int(y[i + 1]))
+                    for i in range(0, len(x) - 1))
 
+    # data packed tight, unpack by explode
+    result = gf.apply(pandas_draw_line).explode(ignore_index=True).explode(ignore_index=True)
+    result = pd.DataFrame(result, columns=['raw'])
 
-def lines_to_points(df):
-    shape, min_max = get_area_info(df.bounds)
-    x = pd.DataFrame(np.arange(0, int(min_max['maxx'].iloc[0])), columns=['x', ])
-    y = pd.DataFrame(np.arange(0, int(min_max['maxx'].iloc[0])), columns=['y', ])
-    x['key'] = True
-    y['key'] = True
-    coords_df = pd.merge(x, y, on='key').drop('key', 1)
+    # 0 => packed x axes, 1 => packed y axes, 2 => packed values - not used
+    indexes = pd.DataFrame()
+    indexes['x'] = result.iloc[0::3, 0].explode().reset_index(drop=True)
+    indexes['y'] = result.iloc[1::3, 0].explode().reset_index(drop=True)
 
-    points_df = geopandas.GeoDataFrame(coords_df,
-                                       geometry=geopandas.points_from_xy(coords_df['x'], coords_df['y']),
-                                       crs=crs)
-
-    points = points_df.drop('x', 1).drop('y', 1)
-    points = cross_cover(points, df)
-    return points
+    return indexes.drop_duplicates()
 
 
 def get_ca_borders(area='Japan'):
     file_name = cleaned_file.format(area)
     if not os.path.isfile(file_name):
-        df = clear_original_dataset(area)
+        gf = clear_original_dataset(area)
     else:
-        df = geopandas.read_file(file_name)
-
-    # to real kms
-    df.to_crs(crs)
+        gf = geopandas.read_file(file_name)
 
     # move to 0 => minx, miny = 0
-    shape, min_max = get_area_info(df.bounds)
-    df = df.translate(xoff=-min_max['minx'], yoff=-min_max['miny'])
+    shape, min_max = get_area_info(gf.bounds)
+    gf = gf.translate(xoff=-min_max['minx'], yoff=-min_max['miny'])
 
-    # reshape to 1 unit ~= 5km
-    df = transform_deg_to_km(df)
+    # reshape to 1 unit ~= scale km
+    gf = transform_deg_to_km(gf)
 
-    points = lines_to_points(df)
+    points = lines_to_points(gf)
     return points
 
 
 if __name__ == "__main__":
     df = get_ca_borders('Japan')
+    points = geopandas.GeoDataFrame(df,
+                                    geometry=geopandas.points_from_xy(df['x'], df['y']))
+    fig, ax = plt.subplots(1, 1, figsize=(20, 15))
+    points.plot()
 
-    # fig, ax = plt.subplots(1, 1, figsize=(20, 15))
-    # df.plot()
-    #
-    # plt.show()
-    # plt.close(fig)
+    plt.show()
+    plt.close(fig)
