@@ -109,17 +109,15 @@ class Automata:
             # side neighbors
             if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1:
                 adj_cells = - actual_cell
-                continue
-
-            adj_cells = adj_cells + (self.grid[x, y] - actual_cell)
+            else:
+                adj_cells += (self.grid[x, y] - actual_cell)
 
         # diagonal cells
         for x, y in dig_list:
             if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1:
                 diag_cells = - actual_cell
-                continue
-
-            diag_cells = diag_cells + (self.grid[x, y] - actual_cell)
+            else:
+                diag_cells = (self.grid[x, y] - actual_cell)
 
         return actual_cell + self.m * adj_cells + self.d * diag_cells
 
@@ -127,46 +125,49 @@ class Automata:
 
         return self.grid[::-1]
 
-
     def make_animation(self, data, N):
         """ Makes animation from data with N frames. """
 
         # reshape to 3D matrix
-        data=np.reshape(data,(-1, self.rows, self.columns)) 
-        
+        data = np.reshape(data, (-1, self.rows, self.columns))
+
         map = Map(132.56575702690475, 35.19266414615366, 139.6409525751002, 40.84789071506689)
         map.draw_map()
         # example data
         lon = np.arange(135., 137., 0.04)
         lat = np.repeat(37., 50)
 
-        lon = np.reshape(lon,(-1, self.rows))
-        lat = np.reshape(lat,(-1, self.columns))
+        lon = np.reshape(lon, (-1, self.rows))
+        lat = np.reshape(lat, (-1, self.columns))
 
         map.set_data(lon, lat, data)
-        #Map.add_oil(lon[0],lat[0],data)
-        
-        map.add_oil(lon[1], lat[1], data[1]) 
-        map.show_map(show=True, animation=N)
+        # Map.add_oil(lon[0],lat[0],data)
 
+        map.add_oil(lon[1], lat[1], data[1])
+        map.show_map(show=True, animation=N)
 
     def get_N_generations(self, N, direction):
         """ Makes N generations of CA. """
         data = self.swap_rows()
         for i in range(N):
-            ca.next_generation(direction)
-            data = np.append(data,ca.swap_rows())
+            self.next_generation(direction)
+            data = np.append(data, self.swap_rows())
 
         return data
 
 
-if __name__ == "__main__":
-    #actual value 120,120 = 600*600 km
-    #tanker position = 133 52' East,Latitude 37 10' North
-    #5000–6500 m3  of oil spill
+def run_20(ca, data):
+    for i in range(2):
+        ca.next_generation()
+        data = np.append(data, ca.swap_rows())
 
-    ca = Automata(10,10)
-    data = ca.init_oil([1,1,4,4])
-    #ca.print_grid()
-    data = ca.get_N_generations(5,'E')
-    ca.make_animation(data,0)
+
+if __name__ == "__main__":
+    # actual value 120,120 = 600*600 km
+    # tanker position = 133 52' East,Latitude 37 10' North
+    # 5000–6500 m3  of oil spill
+
+    ca = Automata(200, 200)
+    data = ca.init_oil([1, 1, 4, 4])
+    # ca.print_grid()
+    data = ca.get_N_generations(5, 'E')

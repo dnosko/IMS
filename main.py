@@ -6,24 +6,28 @@ from automata import Automata
 
 
 def run_20(ca, data):
-    for i in range(5):
+    for i in range(20):
         ca.next_generation()
         data = np.append(data, ca.swap_rows())
 
 
 if __name__ == "__main__":
-    b = borders.get_ca_borders('Japan')
-    width = b['x'].max() + 1
-    height = b['y'].max() + 1
+    # b = borders.get_ca_borders('Japan')
+    # width = b['x'].max() + 1
+    # height = b['y'].max() + 1
+    #
+    # CA = Automata(width, height)
+    # CA.init_borders(b['x'], b['y'])
+    #
+    # x, y = borders.point_to_cell(140, 40)
+    #
+    # data = CA.init_oil([x, y, x + 1, y + 1])
+    # # CA.print_grid()
+    # data = CA.swap_rows()
 
-    CA = Automata(width, height)
-    CA.init_borders(b['x'], b['y'])
-
-    x, y = borders.point_to_cell(140, 40)
-
-    data = CA.init_oil([1, 1, 4, 4])
-    # CA.print_grid()
-    data = CA.swap_rows()
-
-    run_20(CA, data)
-
+    CA = Automata(100, 100)
+    CA.init_oil([10, 10, 10, 10])
+    # ca.print_grid()
+    data = CA.get_N_generations(5, 'E')
+    print(timeit.timeit(lambda: CA.get_N_generations(5, 'E'), number=4))
+    print('a')
