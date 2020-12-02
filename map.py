@@ -43,6 +43,11 @@ class Map:
             Saves map to given location in argument save.
             If animation True, creates animation.
         """
+
+        fig = plt.gca()
+        fig.axes.get_xaxis().set_visible(False)
+        fig.axes.get_yaxis().set_visible(False)
+
         if save:
             try:
                 os.mkdir(save)
@@ -74,17 +79,8 @@ class Map:
 
 
 if __name__ == "__main__":
-    Map = Map(132.56575702690475, 35.19266414615366, 139.6409525751002, 40.84789071506689)
-    Map.draw_map()
+    Map = Map(10,10,np.array([[[1,2,3],[4,5,6]]]))
 
-    # example data
-    lon = np.arange(135., 138., 0.1)
-    lat = np.repeat(37., 30)
+    Map.add_oil([[1,2,3],[4,5,6]])
 
-    lon = np.reshape(lon, (-1, 10))
-    lat = np.reshape(lat, (-1, 10))
-
-    Map.set_data(lon, lat, data)
-    Map.add_oil(lon[0], lat[0], data)
-
-    Map.show_map(animation=True)
+    Map.show_map(animation=False)
