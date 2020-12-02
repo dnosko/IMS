@@ -9,64 +9,33 @@ from matplotlib.animation import FuncAnimation
 
 
 class Map:
-    lon = []
-    lat = []
-    data = []
 
-    def __init__(self, llon, llat, rlon, rlat):
-        """Class constructor. llon,llat - down left corner of map, 
-           rlon,rlat - upper right corner of map"""
-
-        self.llon = llon
-        self.llat = llat
-        self.rlon = rlon
-        self.rlat = rlat
-
-    def set_data(self, lon, lat, data):
-        """ Sets data, lon and lat attributes """
+    def __init__(self, max_rows, max_columns, data):
+        """Class constructor."""
         self.data = data
-        self.lon = lon
-        self.lat = lat
 
-    def draw_map(self, paralles=None, meridians=None):
-        """ Draws a map from coordinates given in constructor. Can be drawn with or without 
-            parallels and meridians"""
+        data = data[0] #get first 2D matrix
 
-        self.map = Basemap(self.llon, self.llat, self.rlon, self.rlat,
-                           resolution='h')
+        x = np.linspace(0, max_rows, data.shape[1])
+        y = np.linspace(0, max_columns, data.shape[0]) 
+        
 
-        self.map.fillcontinents(color='green', lake_color='aqua')
-        self.map.drawcoastlines()
+        self.xx, self.yy = np.meshgrid(x, y)
+        
 
-        if paralles is not None:
-            # paralels example np.arange(0.,141.,0.5)
-            self.map.drawparallels(paralles, labels=[False, True, True, False])
-
-        if meridians is not None:
-            # meridians example np.arange(0.,351.,0.5)
-            self.map.drawmeridians(meridians, labels=[True, False, False, True])
-
-    def add_oil(self, coord_lon, coord_lat, data):
+    def add_oil(self, data):
         """ Creates oil mesh. 
-            Coord_lon is array of longtitude coordinates.
-            Coord_lat is array of lattitude coordinates.
-            Data is matrix with values at given squares
+            Takes 2D matrix.
                 - 0  : white 
-                - 10 : black
-                - else shades of greys
-            Data values must be vertically inverted. 
-            Colormesh prints only n-1 cols and rows.
+                - 7.9 : black
+                - < 0 : green
         """
 
-        x = np.linspace(coord_lon[0], coord_lon[-1], data.shape[1])
-        y = np.linspace(coord_lat[0], coord_lat[0] + 1, data.shape[0])
-
-        xx, yy = np.meshgrid(x, y)
-
         cm = plt.get_cmap('binary')
-        cm.set_under('white')
+        cm.set_under('green')
 
-        return self.map.pcolormesh(xx, yy, data, cmap=cm, vmin=0, vmax=10)
+        return plt.pcolormesh(self.xx, self.yy, data, cmap=cm, vmin=0, vmax=7.9)
+
 
     def show_map(self, show=True, save=None, animation=False):
         """ Plots map.
@@ -91,19 +60,15 @@ class Map:
             animation = FuncAnimation(fig=fig, func=self.animate,
                                       frames=animation, interval=200, repeat=True, blit=False)
 
-            animation.save('simulation.gif', writer='imagemagick', dpi=600)
+            animation.save('simulation.gif', writer='imagemagick')
             print('Done')
 
     def animate(self, i):
         """ Creates animation from array of data """
 
-        # if i == 1:
-        #    print('Generating animation...')
-
         plt.clf()
-        self.draw_map()
 
-        self.add_oil(self.lon[i], self.lat[i], self.data[i])
+        self.add_oil(self.data[i])
 
         return plt
 
