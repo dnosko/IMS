@@ -21,7 +21,6 @@ class Automata:
                  "E": ([0, 1, 3], [4, 6]), "SW": None, "S": ([0, 1, 2], [4, 5]), "SE": None,
                  "NOWIND": ([0, 1, 2, 3], [4, 5, 6, 7])}
 
-
     def __init__(self, x, y):
         """ Inits grid of cellular automata to x,y shape """
         self.grid = np.zeros(shape=(x, y))
@@ -39,7 +38,9 @@ class Automata:
         return self.grid
 
     def init_borders(self, x, y):
-        self.grid[x][y] = -1.0
+        for i in range(len(x)):
+            self.grid[x[i]][y[i]] = -1.0
+
 
     def print_grid(self):
         """neighbors = self.get_neighbors([4,4])
@@ -130,17 +131,16 @@ class Automata:
         # reshape to 3D matrix
         data = np.reshape(data, (-1, self.rows, self.columns))
 
-        map = Map(self.rows,self.columns, data)
-        
-        map.show_map(show=False,animation=N)
+        map = Map(self.rows, self.columns, data)
 
+        map.show_map(show=False, animation=N)
 
     def get_N_generations(self, N, direction):
         """ Makes N generations of CA. """
         data = self.grid
         for i in range(N):
             self.next_generation(direction)
-            data = np.append(data,self.grid)
+            data = np.append(data, self.grid)
 
         return data
 
@@ -158,7 +158,6 @@ if __name__ == "__main__":
 
     ca = Automata(200, 200)
     data = ca.init_oil([1, 1, 50, 50])
-    #ca.print_grid()
+    # ca.print_grid()
     data = ca.get_N_generations(2, 'S')
-    ca.make_animation(data,2)
-    
+    ca.make_animation(data, 2)

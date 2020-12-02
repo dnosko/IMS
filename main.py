@@ -12,12 +12,12 @@ def run_20(ca, data):
 
 
 if __name__ == "__main__":
-    # b = borders.get_ca_borders('Japan')
-    # width = b['x'].max() + 1
-    # height = b['y'].max() + 1
-    #
-    # CA = Automata(width, height)
-    # CA.init_borders(b['x'], b['y'])
+    b = borders.get_ca_borders('Japan')
+    width = b['x'].max() + 1
+    height = b['y'].max() + 1
+
+    CA = Automata(width, height)
+    CA.init_borders(b['x'].values, b['y'].values)
     #
     # x, y = borders.point_to_cell(140, 40)
     #
@@ -25,9 +25,9 @@ if __name__ == "__main__":
     # # CA.print_grid()
     # data = CA.swap_rows()
 
-    CA = Automata(100, 100)
-    CA.init_oil([10, 10, 10, 10])
-    # ca.print_grid()
-    data = CA.get_N_generations(5, 'E')
-    print(timeit.timeit(lambda: CA.get_N_generations(5, 'E'), number=4))
-    print('a')
+    # CA = Automata(100, 100)
+    # CA.init_oil([10, 10, 10, 10])
+    # # ca.print_grid()
+    # data = CA.get_N_generations(5, 'E')
+    # print(timeit.timeit(lambda: CA.get_N_generations(5, 'E'), number=4))
+    # print('a')
