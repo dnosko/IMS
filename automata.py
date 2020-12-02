@@ -149,7 +149,7 @@ class Automata:
         map.show_map(show=True,animation=N)
 
 
-    def get_N_generations(self, N, direction):
+    def get_N_generations(self, N, direction="NOWIND"):
         """ Makes N generations of CA. """
         data = self.grid
         for i in range(N):
