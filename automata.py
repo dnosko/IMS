@@ -115,7 +115,7 @@ class Automata:
         # adjacent cells
         for x, y in adj_list:
             # side neighbors
-            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1:
+            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x,y] == self.border:
                 adj_cells = - actual_cell
             else:
                 try:    
@@ -125,7 +125,7 @@ class Automata:
 
         # diagonal cells
         for x, y in dig_list:
-            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1:
+            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x,y] == self.border:
                 diag_cells = - actual_cell
             else:
                 diag_cells = (self.grid[x, y] - actual_cell)
@@ -146,7 +146,7 @@ class Automata:
 
         map = Map(self.rows, self.columns, data)
 
-        map.show_map(show=True)
+        map.show_map(show=True,animation=N)
 
 
     def get_N_generations(self, N, direction):
