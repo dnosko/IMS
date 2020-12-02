@@ -112,99 +112,18 @@ def transform_deg_to_km(gf):
     return gf.apply(pandas_deg_to_km)
 
 
-def get_grid(gf):
-    shape, min_max = get_area_info(gf.bounds)
-    x_s = pd.Series(list(range(0, int(min_max['maxx'].iloc[0]))))
-    y_s = pd.Series(list(range(0, int(min_max['maxy'].iloc[0]))))
-    x = pd.DataFrame(x_s, columns=['x', ])
-    y = pd.DataFrame(y_s, columns=['y', ])
-    x['key'] = True
-    y['key'] = True
-    coords_df = pd.merge(x, y, on='key').drop('key', 1)
-
-    # todo + 0.5 sale to make center of cell
-    grid_df = geopandas.GeoDataFrame(coords_df, crs=crs,
-                                     geometry=geopandas.points_from_xy(coords_df['x'], coords_df['y']))
-    grid_df.geometry = grid_df.buffer(ca_scale * 1.5).envelope
-
-    return grid_df
-
-
-# def target_cover(grid, gf):
-#     grid['matched'] = False
-#     gf_len = len(gf.index)
-#
-#     for i in range(0, gf_len):
-#         grid['matched'] |= grid.geometry.covers(gf)
-#
-#         save_last = gf.geometry.iloc[0]
-#         gf = gf.shift(-1)
-#         gf._set_value(-1, save_last)
-#
-#     return grid
-
-
-def cross_cover(grid, gf):
-    grid['matched'] = False
-    gf_len = len(gf.index)
-
-    gf = geopandas.GeoDataFrame(geometry=gf)
-
-    grid['key'] = True
-    gf['key'] = True
-    merged = pd.merge(grid, gf, on='key').drop('key', 1)
-
-    # ****** 1
-    # thread_number = 4
-    # batch = np.ceil(gf_len / thread_number)
-    # tails = list(int(i * batch) for i in range(0, 5))
-    # tails[-1] = gf_len - 1
-    #
-    # processes = list()
-    # for i in range(0, thread_number):
-    #     p = Process(target=target_cover, args=(grid, gf[gf[tails[i]: tails[i + 1]]]))
-    #     processes.append(p)
-    #
-    # for p in processes:
-    #     p.start()
-    #
-    # for p in processes:
-    #     p.join()
-
-    # ******* 2
-    # for i in range(0, gf_len):
-    #     grid['matched'] |= grid.geometry.covers(gf)
-    #
-    #     save_last = gf.geometry.iloc[0]
-    #     gf = gf.shift(-1)
-    #     gf._set_value(-1, save_last)
-    print("a")
-
-    return grid
-
-
 def lines_to_points(gf):
-    # ******* 1
-    # file_name = grid_file.format('Japan')
-    # if not os.path.isfile(file_name):
-    #     grid_df = get_grid(gf)
-    #     grid_df = cross_cover(grid_df, gf)
-    #     grid_df.to_file('Japan_grid.geojson', driver='GeoJSON')
-    # else:
-    #     grid_df = geopandas.read_file(file_name)
-
-    # return grid_df
-
     def pandas_draw_line(line_string: LineString):
-        # line_string = transform(transform_float_to_ints, line_string)
         to_int = lambda n: int(n + 0.5)
         x, y = line_string.xy
         return list(line_aa(to_int(x[i]), to_int(y[i]), to_int(x[i + 1]), to_int(y[i + 1]))
                     for i in range(0, len(x) - 1))
 
+    # data packed tight, unpack by explode
     result = gf.apply(pandas_draw_line).explode(ignore_index=True).explode(ignore_index=True)
     result = pd.DataFrame(result, columns=['raw'])
 
+    # 0 => packed x axes, 1 => packed y axes, 2 => packed values - not used
     indexes = pd.DataFrame()
     indexes['x'] = result.iloc[0::3, 0].explode().reset_index(drop=True)
     indexes['y'] = result.iloc[1::3, 0].explode().reset_index(drop=True)
@@ -223,7 +142,7 @@ def get_ca_borders(area='Japan'):
     shape, min_max = get_area_info(gf.bounds)
     gf = gf.translate(xoff=-min_max['minx'], yoff=-min_max['miny'])
 
-    # reshape to 1 unit ~= 5km
+    # reshape to 1 unit ~= scale km
     gf = transform_deg_to_km(gf)
 
     points = lines_to_points(gf)
