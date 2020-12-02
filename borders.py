@@ -33,6 +33,9 @@ data_folder = 'data'
 
 areas = ['Japan', 'Mexico']
 
+# minx, miny, maxx, maxy
+area_info = {"Japan": (132.31149, 35.06576, 140.07372, 40.76985)}
+
 original_file = os.path.join(data_folder, '{}.geojson')
 cleaned_file = os.path.join(data_folder, '{}_cleaned.geojson')
 points_file = os.path.join(data_folder, '{}_points.geojson')
@@ -93,8 +96,8 @@ def get_area_info(bounds) -> tuple:
 
 def shapely_deg_to_km(x, y, z=None):
     """
-    Latitude: 1 deg = 110.574
     Longtitude: 1 deg = 111.320 * cos(Latitude)
+    Latitude: 1 deg = 110.574
     x` = 111.320 * cos(y) * km
     y` = 110.574 * y km
     """
@@ -105,14 +108,14 @@ def pandas_deg_to_km(line_string: LineString):
     return transform(shapely_deg_to_km, line_string)
 
 
-def point_to_cell(lon, lat):
+def point_to_cell(lon, lat, area="Japan"):
     """
     Returns x and y index in CA grid from longtitude and latitude
     """
-    p = Point(lon, lat)
-    gdf = gpd.GeoDataFrame(geometry=[p, ], crs=crs)
-    t = transform(shapely_deg_to_km, gdf.iloc[0, 0])
-    return t.xy[0][0], t.xy[1][0]
+    lon = lon - area_info[area][0]
+    lat = lat - area_info[area][1]
+    x, y = shapely_deg_to_km(lon, lat)
+    return int(x + 0.5), int(y + 0.5)
 
 
 def transform_deg_to_km(gf):
