@@ -116,7 +116,7 @@ class Automata:
         for x, y in adj_list:
             # side neighbors
             if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x,y] == self.border:
-                adj_cells = - actual_cell
+                adj_cells = 0
             else:
                 try:    
                     adj_cells += (self.grid[x, y] - actual_cell)
@@ -126,7 +126,7 @@ class Automata:
         # diagonal cells
         for x, y in dig_list:
             if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x,y] == self.border:
-                diag_cells = - actual_cell
+                diag_cells = 0
             else:
                 diag_cells = (self.grid[x, y] - actual_cell)
 
