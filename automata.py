@@ -130,7 +130,7 @@ class Automata:
             else:
                 diag_cells = (self.grid[x, y] - actual_cell)
 
-        return actual_cell + self.m * adj_cells + self.d * diag_cells
+        return actual_cell + self.m * adj_cells + self.d * self.m * diag_cells
 
 
     def swap_rows(self):

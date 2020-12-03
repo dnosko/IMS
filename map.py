@@ -45,9 +45,6 @@ class Map:
             If animation True, creates animation.
         """
 
-        fig = plt.gca()
-        fig.axes.get_xaxis().set_visible(False)
-        fig.axes.get_yaxis().set_visible(False)
 
         if save:
             try:
@@ -58,12 +55,16 @@ class Map:
             plt.savefig(output_path, dpi=800)
 
         if show:
+            fig = plt.gca()
+            fig.axes.get_xaxis().set_visible(False)
+            fig.axes.get_yaxis().set_visible(False)
             self.add_oil(self.data[0])
             plt.show()
 
         if animation:
             print('Generating animation...')
             fig = plt.figure()
+            
             animation = FuncAnimation(fig=fig, func=self.animate,
                                       frames=animation, interval=200, repeat=True, blit=False)
 
