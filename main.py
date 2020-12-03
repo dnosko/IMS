@@ -16,13 +16,13 @@ if __name__ == "__main__":
     width = b['x'].max() + 1
     height = b['y'].max() + 1
 
-    CA = Automata(width, height)
+    CA = Automata(width, height, 100)
     CA.init_borders(b['x'].values, b['y'].values)
 
     x, y = borders.point_to_cell(133.0, 37.0)
-    data = CA.init_oil([x, y, x + 1, y + 1])
-    data = CA.get_N_generations(3)
-    CA.make_animation(data, 2)
+    data = CA.init_oil([x, y, x + 3, y + 3])
+    data = CA.get_N_generations(5)
+    CA.make_animation(data, 5)
 
     # CA = Automata(100, 100)
     # CA.init_oil([10, 10, 10, 10])

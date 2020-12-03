@@ -10,8 +10,7 @@ class Automata:
         W  X E   = 1 X 2
         SW S SE    6 3 7
     """
-
-    max_mass = 5000  # max kg mass of oil
+    
     water = 0.0
     border = -1.0
 
@@ -23,11 +22,12 @@ class Automata:
                  "NOWIND": ([0, 1, 2, 3], [4, 5, 6, 7])}
 
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, max_mass):
         """ Inits grid of cellular automata to x,y shape """
         self.grid = np.zeros(shape=(x, y))
         self.rows = x
         self.columns = y
+        self.max_mass = max_mass
 
 
     def init_oil(self, coordinates):

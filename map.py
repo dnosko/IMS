@@ -14,7 +14,7 @@ class Map:
         """Class constructor."""
         self.data = data
 
-        data = data[0] #get first 2D matrix
+        data = data[0]  # get first 2D matrix
 
         x = np.linspace(0, max_rows, data.shape[1])
         y = np.linspace(0, max_columns, data.shape[0]) 
@@ -28,8 +28,8 @@ class Map:
         """ Creates oil mesh. 
             Takes 2D matrix.
                 - 0  : white 
-                - 7.9 : black
-                - < 0 : green
+                - max_mass : black
+                - < 0 : green - borders
         """
 
         cm = plt.get_cmap('binary')
@@ -63,6 +63,7 @@ class Map:
 
         if animation:
             print('Generating animation...')
+            
             fig = plt.figure()
             
             animation = FuncAnimation(fig=fig, func=self.animate,
@@ -75,6 +76,8 @@ class Map:
         """ Creates animation from array of data """
 
         plt.clf()
+        plt.xticks([])
+        plt.yticks([])
 
         self.add_oil(self.data[i])
 
