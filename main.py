@@ -19,10 +19,10 @@ if __name__ == "__main__":
     CA = Automata(width, height)
     CA.init_borders(b['x'].values, b['y'].values)
 
-    x, y = borders.point_to_cell(133.0, 37.0)
-    data = CA.init_oil([x, y, x + 1, y + 1])
-    data = CA.get_N_generations(3)
-    CA.make_animation(data, 2)
+    x, y = borders.point_to_cell(133.86, 37.16)
+    data = CA.init_oil([x, y, x + 2, y + 4])
+    data = CA.get_N_generations(120, 'S')
+    CA.make_animation(data, 120)
 
     # CA = Automata(100, 100)
     # CA.init_oil([10, 10, 10, 10])

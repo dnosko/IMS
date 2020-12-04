@@ -11,7 +11,7 @@ class Automata:
         SW S SE    6 3 7
     """
 
-    max_mass = 7.9  # max kg mass of oil
+    max_mass = 790.0  # max kg mass of oil
     water = 0.0
     border = -1.0
 
@@ -22,13 +22,11 @@ class Automata:
                  "E": ([0, 1, 3], [4, 6]), "SW": None, "S": ([0, 1, 2], [4, 5]), "SE": None,
                  "NOWIND": ([0, 1, 2, 3], [4, 5, 6, 7])}
 
-
     def __init__(self, x, y):
         """ Inits grid of cellular automata to x,y shape """
         self.grid = np.zeros(shape=(x, y))
         self.rows = x
         self.columns = y
-
 
     def init_oil(self, coordinates):
         """ Inits oil spill. Takes list of x1,y1,x2,y2 coordinates """
@@ -40,22 +38,20 @@ class Automata:
 
         return self.grid
 
-
     def init_borders(self, x, y):
         for i in range(len(x)):
             self.grid[x[i]][y[i]] = self.border
-        
-        #flip and rotate matrix
+
+        # flip and rotate matrix
         self.grid = np.flipud(self.grid)
-        self.grid = np.rot90(self.grid,3)
-        #swap columns and rows
+        self.grid = np.rot90(self.grid, 3)
+        # swap columns and rows
         cols = self.columns
         self.columns = self.rows
         self.rows = cols
 
     def print_grid(self):
-        print (self.grid)
-
+        print(self.grid)
 
     def get_neighbors(self, coordinates):
         """ Gets neighbors based on von neumann neighborhood """
@@ -73,7 +69,6 @@ class Automata:
 
         return neighbors
 
-
     def next_generation(self, direction='NOWIND'):
         """ Creates new generation based on wind direction. 
             Direction must be string from this list: NW,W,NE,W,E,SW,S,SE,NOWIND.
@@ -85,22 +80,19 @@ class Automata:
         newgen = copy.deepcopy(self.grid)
         for x in range(self.rows):
             for y in range(self.columns):
-                if self.grid[x,y] == self.border:
-                        continue
+                if self.grid[x, y] == self.border:
+                    continue
                 newgen[x, y] = self.__rules(self.get_neighbors([x, y]), self.grid[x, y])
 
         self.grid = newgen
-
 
     def __rules(self, neighborhood, actual_cell):
 
         new_mass = self.__wind(neighborhood, actual_cell)
         if new_mass > self.max_mass:
             new_mass = self.max_mass
-        
 
         return new_mass
-
 
     def __wind(self, neighborhood, actual_cell):
         """ Returns new value of cell, when wind is taken into consideration. 
@@ -115,28 +107,26 @@ class Automata:
         # adjacent cells
         for x, y in adj_list:
             # side neighbors
-            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x,y] == self.border:
+            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x, y] == self.border:
                 adj_cells = - actual_cell
             else:
-                try:    
+                try:
                     adj_cells += (self.grid[x, y] - actual_cell)
                 except IndexError:
-                    print(self.rows,self.columns,x,y)
+                    print(self.rows, self.columns, x, y)
 
         # diagonal cells
         for x, y in dig_list:
-            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x,y] == self.border:
+            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x, y] == self.border:
                 diag_cells = - actual_cell
             else:
                 diag_cells = (self.grid[x, y] - actual_cell)
 
         return actual_cell + self.m * adj_cells + self.d * diag_cells
 
-
     def swap_rows(self):
 
         return self.grid[::-1]
-
 
     def make_animation(self, data, N):
         """ Makes animation from data with N frames. """
@@ -146,8 +136,7 @@ class Automata:
 
         map = Map(self.rows, self.columns, data)
 
-        map.show_map(show=True,animation=N)
-
+        map.show_map(show=True, animation=N)
 
     def get_N_generations(self, N, direction="NOWIND"):
         """ Makes N generations of CA. """
