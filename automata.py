@@ -22,11 +22,14 @@ class Automata:
                  "E": ([0, 1, 3], [4, 6]), "SW": None, "S": ([0, 1, 2], [4, 5]), "SE": None,
                  "NOWIND": ([0, 1, 2, 3], [4, 5, 6, 7])}
 
-    def __init__(self, x, y):
+
+
+    def __init__(self, x, y, max_mass):
         """ Inits grid of cellular automata to x,y shape """
         self.grid = np.zeros(shape=(x, y))
         self.rows = x
         self.columns = y
+        self.max_mass = max_mass
 
     def init_oil(self, coordinates):
         """ Inits oil spill. Takes list of x1,y1,x2,y2 coordinates """
@@ -107,8 +110,9 @@ class Automata:
         # adjacent cells
         for x, y in adj_list:
             # side neighbors
-            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x, y] == self.border:
-                adj_cells = - actual_cell
+            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x,y] == self.border:
+                adj_cells = 0
+
             else:
                 try:
                     adj_cells += (self.grid[x, y] - actual_cell)
@@ -117,12 +121,13 @@ class Automata:
 
         # diagonal cells
         for x, y in dig_list:
-            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x, y] == self.border:
-                diag_cells = - actual_cell
+            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x,y] == self.border:
+                diag_cells = 0
+
             else:
                 diag_cells = (self.grid[x, y] - actual_cell)
 
-        return actual_cell + self.m * adj_cells + self.d * diag_cells
+        return actual_cell + self.m * adj_cells + self.d * self.m * diag_cells
 
     def swap_rows(self):
 
@@ -134,7 +139,7 @@ class Automata:
         # reshape to 3D matrix
         data = np.reshape(data, (-1, self.rows, self.columns))
 
-        map = Map(self.rows, self.columns, data)
+        map = Map(self.rows, self.columns, data,self.max_mass)
 
         map.show_map(show=True, animation=N)
 

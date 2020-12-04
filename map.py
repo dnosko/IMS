@@ -10,31 +10,32 @@ from matplotlib.animation import FuncAnimation
 
 class Map:
 
-    def __init__(self, max_rows, max_columns, data):
+    def __init__(self, max_rows, max_columns, data,max_mass):
         """Class constructor."""
         self.data = data
 
-        data = data[0] #get first 2D matrix
+        data = data[0]  # get first 2D matrix
 
         x = np.linspace(0, max_rows, data.shape[1])
         y = np.linspace(0, max_columns, data.shape[0]) 
         
 
         self.xx, self.yy = np.meshgrid(x, y)
+        self.max_mass = max_mass
         
 
     def add_oil(self, data):
         """ Creates oil mesh. 
             Takes 2D matrix.
                 - 0  : white 
-                - 7.9 : black
-                - < 0 : green
+                - max_mass : black
+                - < 0 : green - borders
         """
 
         cm = plt.get_cmap('binary')
         cm.set_under('green')
 
-        return plt.pcolormesh(self.xx, self.yy, data, cmap=cm, vmin=0, vmax=7.9)
+        return plt.pcolormesh(self.xx, self.yy, data, cmap=cm, vmin=0, vmax=self.max_mass)
 
 
     def show_map(self, show=True, save=None, animation=False):
@@ -44,9 +45,6 @@ class Map:
             If animation True, creates animation.
         """
 
-        fig = plt.gca()
-        fig.axes.get_xaxis().set_visible(False)
-        fig.axes.get_yaxis().set_visible(False)
 
         if save:
             try:
@@ -57,12 +55,17 @@ class Map:
             plt.savefig(output_path, dpi=800)
 
         if show:
+            fig = plt.gca()
+            fig.axes.get_xaxis().set_visible(False)
+            fig.axes.get_yaxis().set_visible(False)
             self.add_oil(self.data[0])
             plt.show()
 
         if animation:
             print('Generating animation...')
+            
             fig = plt.figure()
+            
             animation = FuncAnimation(fig=fig, func=self.animate,
                                       frames=animation, interval=200, repeat=True, blit=False)
 
@@ -73,6 +76,8 @@ class Map:
         """ Creates animation from array of data """
 
         plt.clf()
+        plt.xticks([])
+        plt.yticks([])
 
         self.add_oil(self.data[i])
 

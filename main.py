@@ -16,7 +16,7 @@ if __name__ == "__main__":
     width = b['x'].max() + 1
     height = b['y'].max() + 1
 
-    CA = Automata(width, height)
+    CA = Automata(width, height, 100)
     CA.init_borders(b['x'].values, b['y'].values)
 
     x, y = borders.point_to_cell(133.86, 37.16)
