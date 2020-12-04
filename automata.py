@@ -11,7 +11,6 @@ class Automata:
         SW S SE    6 3 7
     """
 
-    max_mass = 790.0  # max kg mass of oil
     water = 0.0
     border = -1.0
 
@@ -21,8 +20,6 @@ class Automata:
     wind_dict = {"NW": None, "N": ([1, 2, 3], [6, 7]), "NE": None, "W": ([0, 2, 3], [5, 7]),
                  "E": ([0, 1, 3], [4, 6]), "SW": None, "S": ([0, 1, 2], [4, 5]), "SE": None,
                  "NOWIND": ([0, 1, 2, 3], [4, 5, 6, 7])}
-
-
 
     def __init__(self, x, y, max_mass):
         """ Inits grid of cellular automata to x,y shape """
@@ -73,7 +70,7 @@ class Automata:
         return neighbors
 
     def next_generation(self, direction='NOWIND'):
-        """ Creates new generation based on wind direction. 
+        """ Creates new generation based on wind direction.
             Direction must be string from this list: NW,W,NE,W,E,SW,S,SE,NOWIND.
             Implicitly set to NOWIND.
         """
@@ -98,7 +95,7 @@ class Automata:
         return new_mass
 
     def __wind(self, neighborhood, actual_cell):
-        """ Returns new value of cell, when wind is taken into consideration. 
+        """ Returns new value of cell, when wind is taken into consideration.
         """
 
         adj_cells = 0
@@ -110,9 +107,8 @@ class Automata:
         # adjacent cells
         for x, y in adj_list:
             # side neighbors
-            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x,y] == self.border:
+            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x, y] == self.border:
                 adj_cells = 0
-
             else:
                 try:
                     adj_cells += (self.grid[x, y] - actual_cell)
@@ -121,9 +117,8 @@ class Automata:
 
         # diagonal cells
         for x, y in dig_list:
-            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x,y] == self.border:
+            if x == -1 or x > self.rows - 1 or y == -1 or y > self.columns - 1 or self.grid[x, y] == self.border:
                 diag_cells = 0
-
             else:
                 diag_cells = (self.grid[x, y] - actual_cell)
 
@@ -139,7 +134,7 @@ class Automata:
         # reshape to 3D matrix
         data = np.reshape(data, (-1, self.rows, self.columns))
 
-        map = Map(self.rows, self.columns, data,self.max_mass)
+        map = Map(self.rows, self.columns, data, self.max_mass)
 
         map.show_map(show=True, animation=N)
 
