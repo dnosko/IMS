@@ -3,4 +3,4 @@ project(ims_c__)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(ims_c__ main.cpp Map.cpp Map.h)
+add_executable(ims_c__ main.cpp Map.cpp Map.h Automata.cpp Automata.h)
