@@ -29,9 +29,12 @@ void Map::add_oil(vector<Coord> oil) {
     for(int i = 0; i < size; i++){
         int x = oil.at(i).first;
         int y = oil.at(i).second;
-        // oil cant be on borders
-        if (map_grid[x][y] != '-')
-            map_grid[x][y] = 'X';
+        // oil cant be out of map
+        if(x < width && y < height) {
+            // oil cant be on borders
+            if (map_grid[x][y] != '-')
+                map_grid[x][y] = 'X';
+        }
     }
 }
 
