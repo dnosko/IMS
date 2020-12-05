@@ -35,13 +35,13 @@ private:
     //constants
     float m = 0.098;  // spreading in the four adjacent cells
     float d = 0.0176; // spreading constant for diagonal cells
+    vector<Coord> neighborhood;
 
-    vector<Coord> get_neighbors(Coord cell); // returns moore neighborhood
+    void get_neighbors(Coord cell); // returns moore neighborhood
     void next_generation();
-    int rules(vector<Coord> neighborhood, int actual_cell_mass);
-    int wind(vector<Coord> neighborhood, int actual_cell_mass);
-
-
+    int rules(int actual_cell_mass);
+    int wind(int actual_cell_mass);
+    int cells_sum(unsigned from, unsigned to, int actual_cell_mass); // type = 'A'=adjustent cells or 'D'=diagonal
 };
 
 
