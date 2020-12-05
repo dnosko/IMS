@@ -13,15 +13,16 @@ using Coord = pair<int, int>;
 
 class Map {
 public:
+    Map(int x, int y);
     Map();
     void show_map();
-    void add_oil(vector<pair<Coord, int>> oil); // adds oil to map
+    void add_oil(vector<vector<int>> oil, int max_mass); // adds oil to map
 
 private:
     void init_map();
-    int height = 70;
-    int width = 70;
-    vector<vector<char> > map_grid;
+    int width;
+    int height;
+    vector<vector<char>> map_grid;
 };
 
 

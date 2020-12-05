@@ -6,31 +6,34 @@
 #include <cmath>
 #include "Automata.h"
 
-Automata::Automata(int rows, int columns, int max_mass, WindDirection wind) {
-    rows = rows;
-    cols = columns;
+Automata::Automata() {
+    rows = 70;
+    cols = 70;
+    max_oil = 790;
+    wind_direction = NoWind;
+}
+
+Automata::Automata(int x, int y, int max_mass, WindDirection wind) {
+    rows = y;
+    cols = x;
     max_oil = max_mass;
     wind_direction = wind;
 }
 
-vector<pair<Coord, int>> Automata::init_oil(Coord c1, Coord c2) {
+void Automata::init_oil(Coord c1, Coord c2) {
 
-    pair<Coord ,int> cell;
-    Coord coords;
-
-    for(int x = c1.first; x < c2.first; x++){
-        for(int y = c1.second; y < c2.second; y++){
-            coords = make_pair(x,y);
-            cell = make_pair(coords,max_oil);
-            oil_grid.push_back(cell);
+    for(int y = 0; y < rows; y++) {
+        vector<int> cell;
+        for (int x=0; x < cols; x++) {
+            if(x >= c1.first && x <= c2.first &&
+               y >= c1.second && y <= c2.second) {
+                cell.push_back(max_oil);
+            }
+            else
+                cell.push_back(0);
         }
+        oil_grid.push_back(cell);
     }
-
-    return oil_grid;
-}
-
-Automata::Automata() {
-
 }
 
 vector<Coord> Automata::get_neighbors(Coord cell) {
@@ -53,15 +56,13 @@ vector<Coord> Automata::get_neighbors(Coord cell) {
 
 void Automata::next_generation() {
 
-    vector<pair<Coord ,int>> tmp_grid = oil_grid;
-    int size = tmp_grid.size();
-    int act_mass;
+    vector<vector<int>> tmp_grid = oil_grid;
 
-    for(int i = 0; i < size; i++){
-        Coord coords = tmp_grid.at(i).first;
-        act_mass = tmp_grid.at(i).second;
-        neighborhood = get_neighbors(coords);
-        tmp_grid.at(i).second = rules(act_mass);
+    for(int i = 0; i < rows-1; i++) {
+        for (int j=0; j < cols-1; j++) {
+            neighborhood = get_neighbors(make_pair(i,j));
+            tmp_grid[i][j] = rules(tmp_grid[i][j]);
+        }
     }
 
     oil_grid = tmp_grid;
@@ -99,10 +100,19 @@ int Automata::cells_sum(unsigned from, unsigned to, int actual_cell_mass) {
             cells_sum = 0;
         }
         else {
-            cell_mass = oil_grid.at(i).second;
+            cell_mass = oil_grid[x][y];
             cells_sum  += cell_mass - actual_cell_mass;
         }
     }
 
     return cells_sum;
+}
+
+vector<vector<int>> Automata::get_N_generation(int N) {
+
+    for(int i = 0; i < N; i++) {
+        next_generation();
+    }
+
+    return oil_grid;
 }
