@@ -33,7 +33,7 @@ Automata::Automata() {
 
 }
 
-void Automata::get_neighbors(Coord cell) {
+vector<Coord> Automata::get_neighbors(Coord cell) {
     int x = cell.first;
     int y = cell.second;
 
@@ -48,14 +48,23 @@ void Automata::get_neighbors(Coord cell) {
     neighbors.push_back(make_pair(x+1,y-1)); // bottom left
     neighbors.push_back(make_pair(x+1,y+1)); // bottom right
 
-    neighborhood = neighbors;
+    return neighbors;
 }
 
 void Automata::next_generation() {
 
     vector<pair<Coord ,int>> tmp_grid = oil_grid;
+    int size = tmp_grid.size();
+    int act_mass;
 
+    for(int i = 0; i < size; i++){
+        Coord coords = tmp_grid.at(i).first;
+        act_mass = tmp_grid.at(i).second;
+        neighborhood = get_neighbors(coords);
+        tmp_grid.at(i).second = rules(act_mass);
+    }
 
+    oil_grid = tmp_grid;
 }
 
 int Automata::rules(int actual_cell_mass) {

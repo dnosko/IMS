@@ -23,9 +23,11 @@ public:
 
     vector<pair<Coord ,int>> oil_grid;
     WindDirection wind_direction = NoWind;
+
     Automata(int rows, int columns, int max_mass, WindDirection wind);
     Automata();
     vector<pair<Coord, int>> init_oil(Coord c1, Coord c2);
+
 
 
 private:
@@ -37,7 +39,7 @@ private:
     float d = 0.0176; // spreading constant for diagonal cells
     vector<Coord> neighborhood;
 
-    void get_neighbors(Coord cell); // returns moore neighborhood
+    vector<Coord> get_neighbors(Coord cell); // returns moore neighborhood
     void next_generation();
     int rules(int actual_cell_mass);
     int wind(int actual_cell_mass);
