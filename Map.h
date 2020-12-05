@@ -15,7 +15,7 @@ class Map {
 public:
     Map();
     void show_map();
-    void add_oil(vector<Coord> oil); // adds oil to map
+    void add_oil(vector<pair<Coord, int>> oil); // adds oil to map
 
 private:
     void init_map();

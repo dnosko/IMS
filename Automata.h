@@ -12,17 +12,35 @@ using Coord = pair<int, int>;
 
 class Automata {
 public:
-    Automata(int rows, int columns, int max_mass);
+
+    enum WindDirection{
+        North,
+        West,
+        East,
+        South,
+        NoWind
+    };
+
+    vector<pair<Coord ,int>> oil_grid;
+    WindDirection wind_direction = NoWind;
+    Automata(int rows, int columns, int max_mass, WindDirection wind);
     Automata();
-    vector<Coord> init_oil(Coord c1, Coord c2);
+    vector<pair<Coord, int>> init_oil(Coord c1, Coord c2);
+
 
 private:
-    int x = 10;
-    int y = 10;
+    int rows = 10;
+    int cols = 10;
     int max_oil = 10;
     //constants
     float m = 0.098;  // spreading in the four adjacent cells
     float d = 0.0176; // spreading constant for diagonal cells
+
+    vector<Coord> get_neighbors(Coord cell); // returns moore neighborhood
+    void next_generation();
+    int rules(vector<Coord> neighborhood, int actual_cell_mass);
+    int wind(vector<Coord> neighborhood, int actual_cell_mass);
+
 
 };
 

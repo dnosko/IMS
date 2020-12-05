@@ -23,12 +23,13 @@ void Map::show_map() {
     }
 }
 
-void Map::add_oil(vector<Coord> oil) {
+void Map::add_oil(vector<pair<Coord, int>> oil) {
     int size = oil.size();
 
     for(int i = 0; i < size; i++){
-        int x = oil.at(i).first;
-        int y = oil.at(i).second;
+        Coord coords = oil.at(i).first;
+        int x = coords.first;
+        int y = coords.second;
         // oil cant be out of map
         if(x < width && y < height) {
             // oil cant be on borders
