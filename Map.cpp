@@ -8,22 +8,8 @@
 using namespace std;
 
 Map::Map() {
-
-    for(int i = 0; i < width; i++) {
-        vector<char> cell;
-        for (int j = 0; j < height; j++){
-            //TODO borders pravidlo
-            if (i == 0 || i == width-1 || j == 0 || j == height-1) {
-                // borders
-                cell.push_back('-');
-            }
-            else {
-                // water
-                cell.push_back(' ');
-            }
-        }
-        map_grid.push_back(cell);
-    }
+    //TODO pridat custom vstup vyska sirka okna
+    init_map();
 }
 
 
@@ -43,7 +29,27 @@ void Map::add_oil(vector<Coord> oil) {
     for(int i = 0; i < size; i++){
         int x = oil.at(i).first;
         int y = oil.at(i).second;
-        map_grid[x][y] = 'X';
+        // oil cant be on borders
+        if (map_grid[x][y] != '-')
+            map_grid[x][y] = 'X';
+    }
+}
+
+void Map::init_map() {
+    for(int i = 0; i < width; i++) {
+        vector<char> cell;
+        for (int j = 0; j < height; j++){
+            //TODO borders pravidlo
+            if (i == 0 || i == width-1 || j == 0 || j == height-1) {
+                // borders
+                cell.push_back('-');
+            }
+            else {
+                // water
+                cell.push_back(' ');
+            }
+        }
+        map_grid.push_back(cell);
     }
 }
 

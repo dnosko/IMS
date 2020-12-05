@@ -18,6 +18,7 @@ public:
     void add_oil(vector<Coord> oil); // adds oil to map
 
 private:
+    void init_map();
     int height = 70;
     int width = 70;
     vector<vector<char> > map_grid;
