@@ -8,13 +8,6 @@
 
 #define SKIP -2
 
-Automata::Automata() {
-    rows = 70;
-    cols = 70;
-    max_oil = 790;
-    wind_direction = NoWind;
-}
-
 Automata::Automata(int x, int y, int max_mass, WindDirection wind) {
     rows = y;
     cols = x;
@@ -39,6 +32,8 @@ void Automata::init_oil(Coord c1, Coord c2) {
 
 void Automata::init_borders(std::vector<Coord> c) {
     for (auto &p : c) {
+        if(p.first < 0 || p.first > cols || p.second > rows || p.second < 0)
+            continue;
         oil_grid[p.first][p.second] = -1;
     }
 }

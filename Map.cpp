@@ -7,14 +7,12 @@
 using namespace std;
 
 
-Map::Map() {
-    width = 70;
-    height = 70;
-    init_map();
-}
-
 Map::Map(int x, int y) {
-    //TODO PRIDAT OBMEDZENIE
+
+    if ( x < 0 || x > 70 || y < 0  || y > 70){
+        cout << "X and Y must be in <0-70> interval.";
+        exit(1);
+    }
     width = x;
     height = y;
     init_map();
@@ -55,13 +53,13 @@ void Map::add_oil(vector<vector<int>> oil, int max_mass) {
             // oil cant be on borders
             if (map_grid[x][y] != '-') {
                 if (cell > half_mass )
-                    map_grid[x][y] = 'X';
+                    map_grid[x][y] = 'X'; //lots of oil
                 else if(cell > 1 && cell <= half_mass )
-                    map_grid[x][y] = 'x';
+                    map_grid[x][y] = 'x'; //some oil
                 else if (cell > -1)
-                    map_grid[x][y] = ' ';
+                    map_grid[x][y] = ' '; // water
                 else
-                    map_grid[x][y] = '~';
+                    map_grid[x][y] = '~'; // land
             }
         }
     }
