@@ -28,6 +28,7 @@ public:
     Automata(int x, int y, int max_mass, WindDirection wind);
     Automata();
     void init_oil(Coord c1, Coord c2);
+    void init_borders(std::vector<Coord>);
     vector<vector<int>> get_N_generation(int N);
 
 

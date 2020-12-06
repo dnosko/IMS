@@ -2,16 +2,21 @@
 
 #include "Map.h"
 #include "Automata.h"
+#include "borders.h"
 
 //TODO argumenty
 // zobrazit simulaciu po Xtom dni
 
 int main() {
-    int x = 20;
-    int y = 70;
+    int x = 40;
+    int y = 40;
     Map map(x, y);
     Automata automata(x, y, 790, static_cast<Automata::WindDirection>(4));
-    automata.init_oil(make_pair(10, 60), make_pair(15, 65));
+    automata.init_oil(make_pair(18, 22), make_pair(18, 22));
+
+    auto island = get_island(10, 10, 5);
+//    automata.init_borders(island);
+
     vector<vector<int>> oil;
     oil = automata.get_N_generation(5);
     int max_mass = 790;
