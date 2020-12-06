@@ -6,6 +6,8 @@
 #include <cmath>
 #include "Automata.h"
 
+#define SKIP -2
+
 Automata::Automata() {
     rows = 70;
     cols = 70;
@@ -37,11 +39,17 @@ void Automata::init_oil(Coord c1, Coord c2) {
 }
 
 vector<Coord> Automata::get_neighbors(Coord cell) {
+    /*****************************************
+     *     neighboorhood order
+     *       NW N WE    4 0 5
+     *       W  X E   = 1 X 2
+     *       SW S SE    6 3 7
+    ******************************************/
+
     int x = cell.first;
     int y = cell.second;
 
     vector<Coord> neighbors;
-
     neighbors.push_back(make_pair(x-1,y)); // top
     neighbors.push_back(make_pair(x,y-1)); // left
     neighbors.push_back(make_pair(x,y+1)); // right
@@ -50,6 +58,36 @@ vector<Coord> Automata::get_neighbors(Coord cell) {
     neighbors.push_back(make_pair(x-1,y+1)); // top right
     neighbors.push_back(make_pair(x+1,y-1)); // bottom left
     neighbors.push_back(make_pair(x+1,y+1)); // bottom right
+
+    return skip_neighbors(neighbors);
+}
+
+vector<Coord> Automata::skip_neighbors(vector<Coord> neighbors) {
+    // set values to skip if wind is set
+    switch (wind_direction){
+        case North:
+            neighbors.at(0).first = SKIP;
+            neighbors.at(4).first = SKIP;
+            neighbors.at(5).first = SKIP;
+            break;
+        case West:
+            neighbors.at(1).first = SKIP;
+            neighbors.at(4).first = SKIP;
+            neighbors.at(6).first = SKIP;
+            break;
+        case East:
+            neighbors.at(2).first = SKIP;
+            neighbors.at(5).first = SKIP;
+            neighbors.at(7).first = SKIP;
+            break;
+        case South:
+            neighbors.at(3).first = SKIP;
+            neighbors.at(6).first = SKIP;
+            neighbors.at(7).first = SKIP;
+            break;
+        case NoWind:
+            break;
+    }
 
     return neighbors;
 }
@@ -95,11 +133,15 @@ int Automata::cells_sum(unsigned from, unsigned to, int actual_cell_mass) {
 
     for(unsigned i = from; i < to; i++) {
         x = neighborhood.at(i).first;
+        // SKIP if wind direction is set
+        if (neighborhood.at(i).first == SKIP)
+            continue;
         y = neighborhood.at(i).second;
+        // out of borders
         if (x == -1 || x > rows || y == -1 || y > cols) {
             cells_sum = 0;
         }
-        else {
+        else { // get next gen cell value
             cell_mass = oil_grid[x][y];
             cells_sum  += cell_mass - actual_cell_mass;
         }
@@ -116,3 +158,4 @@ vector<vector<int>> Automata::get_N_generation(int N) {
 
     return oil_grid;
 }
+

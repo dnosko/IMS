@@ -22,7 +22,7 @@ public:
     };
 
     vector<vector<int>> oil_grid;
-    WindDirection wind_direction = NoWind;
+    WindDirection wind_direction;
 
     Automata(int x, int y, int max_mass, WindDirection wind);
     Automata();
@@ -40,6 +40,7 @@ private:
     vector<Coord> neighborhood;
 
     vector<Coord> get_neighbors(Coord cell); // returns moore neighborhood
+    vector<Coord> skip_neighbors(vector<Coord> neighbors);
     void next_generation();
     int rules(int actual_cell_mass);
     int wind(int actual_cell_mass);
