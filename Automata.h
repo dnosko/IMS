@@ -6,6 +6,9 @@
 #define IMS_C___AUTOMATA_H
 
 #include <vector>
+#include <map>
+#include <iostream>
+#include <iterator>
 
 using namespace std;
 using Coord = pair<int, int>;

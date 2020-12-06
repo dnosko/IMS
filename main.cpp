@@ -10,6 +10,13 @@
 
 int main(int argc, char* argv[]) {
 
+    map<Automata::WindDirection ,std::string> m;
+    m[Automata::North] = "^ North";
+    m[Automata::West] = "< West";
+    m[Automata::East] = "> East";
+    m[Automata::South] = "v South";
+    m[Automata::NoWind] = "No wind";
+
     Args args;
     Arguments arguments = args.parseArgs(argc, argv);
 
@@ -26,7 +33,14 @@ int main(int argc, char* argv[]) {
     vector<vector<int>> oil;
     oil = automata.get_N_generation(arguments.Nth_gen);
     map.add_oil(oil, arguments.oil_mass);
+
+    // output
     map.show_map();
-    std::cout << "Generation " << arguments.Nth_gen;
+
+    int time = arguments.Nth_gen;
+    std::cout << "Time elapsed: " << time/24 <<" days "<< time % 24 << " h" << "\n";
+    std::cout << "Wind direction: " << m[static_cast<Automata::WindDirection>(arguments.wind)] ;
+
     return 0;
 }
+

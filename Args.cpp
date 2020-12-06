@@ -90,11 +90,11 @@ void Args::help() {
               << "\t-j\t Island y coordinate \n"
               << "\t-r\t Island radius \n\n"
               << "\t-w\t Wind direction:\n"
-              << "\t\tNorth = 0\n"
-                 "\t\tWest = 1 \n"
-                 "\t\tEast = 2\n"
-                 "\t\tSouth = 3\n"
-                 "\t\tNoWind = 4\n" <<
+              << "\t\t\tNorth = 0\n"
+                 "\t\t\tWest = 1 \n"
+                 "\t\t\tEast = 2\n"
+                 "\t\t\tSouth = 3\n"
+                 "\t\t\tNoWind = 4\n" <<
 
                  "" << std::endl;
 
