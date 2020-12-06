@@ -14,7 +14,6 @@ using Coord = pair<int, int>;
 class Map {
 public:
     Map(int x, int y);
-    Map();
     void show_map();
     void add_oil(vector<vector<int>> oil, int max_mass); // adds oil to map
 
