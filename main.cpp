@@ -24,10 +24,32 @@ int main(int argc, char* argv[]) {
     Automata automata(arguments.CA_x, arguments.CA_y, arguments.oil_mass,
                       static_cast<Automata::WindDirection>(arguments.wind));
 
+    /* swap if needed */
+    if (arguments.oil_x1 > arguments.oil_x2) {
+        swap(arguments.oil_x1,arguments.oil_x2);
+    }
+
+    if (arguments.oil_y1 > arguments.oil_y2) {
+        swap(arguments.oil_y1,arguments.oil_y2);
+    }
+
+    int oil_width = arguments.oil_x2 - arguments.oil_x1;
+    int oil_height = arguments.oil_y2 - arguments.oil_y1;
+
+    if (oil_width > arguments.CA_x || oil_height > arguments.CA_y){
+        std::cout << "Oil must be inside CA/Map";
+        return 1;
+    }
     automata.init_oil(make_pair(arguments.oil_x1, arguments.oil_y1), make_pair(arguments.oil_x2, arguments.oil_y2));
 
     // get borders
     auto island = get_island(arguments.land_x, arguments.land_y, arguments.land_r);
+
+    if (arguments.land_r != 0 && (arguments.land_r >= arguments.CA_x || arguments.land_r >= arguments.CA_y)) {
+        std::cout << "Land radius can't be bigger than size of CA/Map.";
+        return 1;
+    }
+
     automata.init_borders(island);
 
     vector<vector<int>> oil;
@@ -44,4 +66,5 @@ int main(int argc, char* argv[]) {
     std::cout << "Oil at the end in: " << map.oil_count_end << " cells \n";
     return 0;
 }
+
 

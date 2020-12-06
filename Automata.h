@@ -10,6 +10,8 @@
 #include <iostream>
 #include <iterator>
 
+#define ENUM_LEN 4
+
 using namespace std;
 using Coord = pair<int, int>;
 

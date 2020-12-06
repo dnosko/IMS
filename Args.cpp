@@ -5,26 +5,33 @@
 #include <getopt.h>
 #include <iostream>
 #include "Args.h"
+#include "Automata.h"
 
 Args::Args() {
     args.Nth_gen = 0;
     args.CA_x = 100;
     args.CA_y = 100;
     args.oil_mass = 790;
-    args.oil_x1 = 10;
-    args.oil_y1 = 10;
-    args.oil_x2 = 20;
-    args.oil_y2 = 15;
-    args.land_x = 20;
-    args.land_y = 10,
-    args.land_r = 5,
+    args.oil_x1 = 0;
+    args.oil_y1 = 0;
+    args.oil_x2 = 0;
+    args.oil_y2 = 0;
+    args.land_x = 0;
+    args.land_y = 0,
+    args.land_r = 0,
     args.wind = 4;
 }
 
 Arguments Args::parseArgs(int argc, char **argv) {
 
     int c;
+    int param;
     while ((c = getopt (argc, argv, "N:x:y:o:k:l:m:n:i:j:r:w:h")) != -1) {
+        param = atoi(optarg);
+        if(param < 0){
+            std::cout << char(c) << " value must be greater, equal to 0";
+            exit(1);
+        }
         switch(c){
             case 'N':
                 args.Nth_gen = atoi(optarg);
@@ -61,6 +68,11 @@ Arguments Args::parseArgs(int argc, char **argv) {
                 break;
             case 'w':
                 args.wind = atoi(optarg);
+                if (args.wind > ENUM_LEN) {
+                    std::cout << "Wind must be int in interval 0-4" << std::endl;
+                    help();
+                    exit(1);
+                }
                 break;
             case 'h':
                 help();

@@ -56,7 +56,7 @@ void Map::add_oil(vector<vector<int>> oil, int max_mass) {
                     map_grid[x][y] = 'X'; //lots of oil
                     oil_count_end++;
                 }
-                else if(cell > 1 && cell <= half_mass ){
+                else if(cell > 0 && cell <= half_mass ){
                     map_grid[x][y] = 'x'; //some oil
                     oil_count_end++;
                 }
@@ -75,7 +75,6 @@ void Map::init_map() {
     for(int y = 0; y < height; y++) {
         vector<char> cell;
         for (int x = 0; x < width; x++){
-            //TODO borders pravidlo
             if (y == 0 || y == height - 1 || x == 0 || x == width - 1) {
                 // borders
                 cell.push_back('-');
