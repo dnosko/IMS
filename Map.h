@@ -20,6 +20,7 @@ public:
 
 private:
     void init_map();
+    void show_orientation();
     int width;
     int height;
     vector<vector<char>> map_grid;

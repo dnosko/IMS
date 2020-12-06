@@ -25,10 +25,19 @@ void Map::show_map() {
 
     for(int y = 0; y < height; y++) {
         for (int j = 0; j < width; j++){
-            std::cout << " " << map_grid[y][j];
+            cout << " " << map_grid[y][j];
         }
-        std::cout << '\n';
+        cout << '\n';
     }
+    show_orientation();
+}
+
+void Map::show_orientation() {
+
+    cout << "Map orientation: " << "\n";
+    cout << "                 " << "N" << "\n";
+    cout << "               W " << "X" << " E" << "\n";
+    cout << "                 " << "S" << "\n";
 }
 
 void Map::add_oil(vector<vector<int>> oil, int max_mass) {
