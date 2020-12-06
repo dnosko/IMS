@@ -8,7 +8,7 @@
 #include "Automata.h"
 
 Args::Args() {
-    args.Nth_gen = 0;
+    args.Nth_gen = 1;
     args.CA_x = 50;
     args.CA_y = 50;
     args.oil_mass = 790;
