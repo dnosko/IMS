@@ -7,12 +7,14 @@
 #include "Automata.h"
 
 #define SKIP -2
+#define time 1 // in hours
 
-Automata::Automata(int x, int y, int max_mass, WindDirection wind) {
+Automata::Automata(int x, int y, int max_mass, WindDirection wind, int temperature) {
     rows = y;
     cols = x;
     max_oil = max_mass;
     wind_direction = wind;
+    T = temperature;
 }
 
 void Automata::init_oil(Coord c1, Coord c2) {
@@ -112,9 +114,18 @@ void Automata::next_generation() {
 }
 
 double Automata::rules(double actual_cell_mass) {
-    int new_mass = wind(actual_cell_mass);
+    double evap = evaporation(actual_cell_mass);
+    int new_mass;
+
+    new_mass = wind(actual_cell_mass) - evap;
+
+    int new_mass_debug = wind(actual_cell_mass);
+    cout <<"*"<< new_mass << "-" <<  new_mass_debug<< "*";
+
     if (new_mass > max_oil)
         new_mass = max_oil;
+    if (new_mass < 0)
+        new_mass = 0;
     return new_mass;
 }
 
@@ -127,7 +138,13 @@ double Automata::wind(double actual_cell_mass) {
     diag_cells = cells_sum(4, 8, actual_cell_mass);
     result = actual_cell_mass + m * adj_cells + d * m * diag_cells;
 
-    return round(result);
+    return result;
+}
+
+double Automata::evaporation(double actual_cell_mass) {
+
+    double Ev = actual_cell_mass*T*log(time);
+    return Ev;
 }
 
 int Automata::cells_sum(unsigned from, unsigned to, int actual_cell_mass) {
@@ -162,5 +179,6 @@ vector<vector<double>> Automata::get_N_generation(int N) {
 
     return oil_grid;
 }
+
 
 

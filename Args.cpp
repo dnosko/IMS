@@ -17,8 +17,9 @@ Args::Args() {
     args.oil_x2 = 20;
     args.oil_y2 = 20;
     args.land_x = 0;
-    args.land_y = 0,
-    args.land_r = 0,
+    args.land_y = 0;
+    args.land_r = 0;
+    args.temp = 20;
     args.wind = 4;
 }
 
@@ -26,7 +27,7 @@ Arguments Args::parseArgs(int argc, char **argv) {
 
     int c;
     int param;
-    while ((c = getopt (argc, argv, "N:x:y:o:k:l:m:n:i:j:r:w:h")) != -1) {
+    while ((c = getopt (argc, argv, "N:x:y:o:k:l:m:n:i:j:r:t:w:h")) != -1) {
         param = atoi(optarg);
         if(param < 0){
             std::cout << char(c) << " value must be greater, equal to 0";
@@ -66,6 +67,9 @@ Arguments Args::parseArgs(int argc, char **argv) {
             case 'r':
                 args.land_r = atoi(optarg);
                 break;
+            case 't':
+                args.temp = atoi(optarg);
+                break;
             case 'w':
                 args.wind = atoi(optarg);
                 if (args.wind > ENUM_LEN) {
@@ -88,7 +92,7 @@ Arguments Args::parseArgs(int argc, char **argv) {
 
 void Args::help() {
 
-    std::cout << "./ims [-h] [-Nxyoklmnijr <int>] [-w] \n\n"
+    std::cout << "./ims [-h] [-Nxyoklmnijrt <int>] [-w] \n\n"
               << "\t-h\t Prints help/usage\n\n"
               << "\t-N\t Generate Nth generation\n"
               << "\t-x\t Map width \n"
@@ -100,7 +104,8 @@ void Args::help() {
               << "\t-n\t Oil y2 \n"
               << "\t-i\t Island x coordinate \n"
               << "\t-j\t Island y coordinate \n"
-              << "\t-r\t Island radius \n\n"
+              << "\t-r\t Island radius \n"
+              << "\t-t\t Temperature in °c. Can be only 0 and above. \n\n"
               << "\t-w\t Wind direction:\n"
               << "\t\t\tNorth = 0\n"
                  "\t\t\tWest = 1 \n"

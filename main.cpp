@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     Arguments arguments = args.parseArgs(argc, argv);;
     Map map(arguments.CA_x, arguments.CA_y);
     Automata automata(arguments.CA_x, arguments.CA_y, arguments.oil_mass,
-                      static_cast<Automata::WindDirection>(arguments.wind));
+                      static_cast<Automata::WindDirection>(arguments.wind), arguments.temp);
 
     vector<vector<double>> oil;
     int oil_width,oil_height;

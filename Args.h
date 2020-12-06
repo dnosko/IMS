@@ -18,6 +18,7 @@ public:
         land_x,
         land_y,
         land_r,
+        temp,
         wind;
 };
 

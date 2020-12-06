@@ -30,7 +30,7 @@ public:
     WindDirection wind_direction;
 
 
-    Automata(int x, int y, int max_mass, WindDirection wind);
+    Automata(int x, int y, int max_mass, WindDirection wind, int temperature);
     void init_oil(Coord c1, Coord c2);
     void init_borders(std::vector<Coord>);
     vector<vector<double>> get_N_generation(int N);
@@ -44,6 +44,7 @@ private:
     //constants
     float m = 0.098;  // spreading in the four adjacent cells
     float d = 0.0176; // spreading constant for diagonal cells
+    double T; // temperature in °c
     vector<Coord> neighborhood;
 
 
@@ -52,6 +53,7 @@ private:
     void next_generation();
     double rules(double actual_cell_mass);
     double wind(double actual_cell_mass);
+    double evaporation(double actual_cell_mass);
     int cells_sum(unsigned from, unsigned to, int actual_cell_mass); // type = 'A'=adjustent cells or 'D'=diagonal
 };
 
