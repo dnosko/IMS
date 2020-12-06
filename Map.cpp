@@ -56,10 +56,12 @@ void Map::add_oil(vector<vector<int>> oil, int max_mass) {
             if (map_grid[x][y] != '-') {
                 if (cell > half_mass )
                     map_grid[x][y] = 'X';
-                else if(cell > 0 && cell <= half_mass )
+                else if(cell > 1 && cell <= half_mass )
                     map_grid[x][y] = 'x';
-                else
+                else if (cell > -1)
                     map_grid[x][y] = ' ';
+                else
+                    map_grid[x][y] = '~';
             }
         }
     }

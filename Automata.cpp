@@ -103,6 +103,10 @@ void Automata::next_generation() {
 
     for (int i = 0; i < rows - 1; i++) {
         for (int j = 0; j < cols - 1; j++) {
+            // if cell is border skip
+            if (tmp_grid[i][j] == -1)
+                continue;
+            // get next gen value of cell
             neighborhood = get_neighbors(make_pair(i, j));
             tmp_grid[i][j] = rules(tmp_grid[i][j]);
         }
