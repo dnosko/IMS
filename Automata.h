@@ -26,6 +26,7 @@ public:
 
     vector<vector<int>> oil_grid;
     WindDirection wind_direction;
+    int oil_cell_count;
 
 
     Automata(int x, int y, int max_mass, WindDirection wind);

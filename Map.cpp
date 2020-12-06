@@ -52,10 +52,14 @@ void Map::add_oil(vector<vector<int>> oil, int max_mass) {
         if(x < height && y < width) {
             // oil cant be on borders
             if (map_grid[x][y] != '-') {
-                if (cell > half_mass )
+                if (cell > half_mass ) {
                     map_grid[x][y] = 'X'; //lots of oil
-                else if(cell > 1 && cell <= half_mass )
+                    oil_count_end++;
+                }
+                else if(cell > 1 && cell <= half_mass ){
                     map_grid[x][y] = 'x'; //some oil
+                    oil_count_end++;
+                }
                 else if (cell > -1)
                     map_grid[x][y] = ' '; // water
                 else

@@ -17,11 +17,13 @@ Automata::Automata(int x, int y, int max_mass, WindDirection wind) {
 
 void Automata::init_oil(Coord c1, Coord c2) {
 
+    oil_cell_count = (c2.first - c1.first) * (c2.second - c1.second);
+
     for (int y = 0; y < rows; y++) {
         vector<int> cell;
         for (int x = 0; x < cols; x++) {
-            if (x >= c1.first && x <= c2.first &&
-                y >= c1.second && y <= c2.second) {
+            if (x >= c1.first && x < c2.first &&
+                y >= c1.second && y < c2.second) {
                 cell.push_back(max_oil);
             } else
                 cell.push_back(0);
@@ -161,4 +163,5 @@ vector<vector<int>> Automata::get_N_generation(int N) {
 
     return oil_grid;
 }
+
 

@@ -13,6 +13,8 @@ using Coord = pair<int, int>;
 
 class Map {
 public:
+    int oil_count_end = 0;
+
     Map(int x, int y);
     void show_map();
     void add_oil(vector<vector<int>> oil, int max_mass); // adds oil to map

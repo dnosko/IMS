@@ -39,8 +39,9 @@ int main(int argc, char* argv[]) {
 
     int time = arguments.Nth_gen;
     std::cout << "Time elapsed: " << time/24 <<" days "<< time % 24 << " h" << "\n";
-    std::cout << "Wind direction: " << m[static_cast<Automata::WindDirection>(arguments.wind)] ;
-
+    std::cout << "Wind direction: " << m[static_cast<Automata::WindDirection>(arguments.wind)] << "\n";
+    std::cout << "Oil at the start in: " << automata.oil_cell_count << " cells \n";
+    std::cout << "Oil at the end in: " << map.oil_count_end << " cells \n";
     return 0;
 }
 
