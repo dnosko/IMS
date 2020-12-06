@@ -16,11 +16,10 @@ Automata::Automata(int x, int y, int max_mass, WindDirection wind) {
 }
 
 void Automata::init_oil(Coord c1, Coord c2) {
-
-    oil_cell_count = (c2.first - c1.first) * (c2.second - c1.second);
+    //TODO oil cell count na zaciatku
 
     for (int y = 0; y < rows; y++) {
-        vector<int> cell;
+        vector<double> cell;
         for (int x = 0; x < cols; x++) {
             if (x >= c1.first && x < c2.first &&
                 y >= c1.second && y < c2.second) {
@@ -96,7 +95,7 @@ vector<Coord> Automata::skip_neighbors(vector<Coord> neighbors) {
 
 void Automata::next_generation() {
 
-    vector<vector<int>> tmp_grid = oil_grid;
+    vector<vector<double>> tmp_grid = oil_grid;
 
     for (int i = 0; i < rows - 1; i++) {
         for (int j = 0; j < cols - 1; j++) {
@@ -112,14 +111,14 @@ void Automata::next_generation() {
     oil_grid = tmp_grid;
 }
 
-int Automata::rules(int actual_cell_mass) {
+double Automata::rules(double actual_cell_mass) {
     int new_mass = wind(actual_cell_mass);
     if (new_mass > max_oil)
         new_mass = max_oil;
     return new_mass;
 }
 
-int Automata::wind(int actual_cell_mass) {
+double Automata::wind(double actual_cell_mass) {
 
     int adj_cells, diag_cells;
     float result;
@@ -155,7 +154,7 @@ int Automata::cells_sum(unsigned from, unsigned to, int actual_cell_mass) {
     return cells_sum;
 }
 
-vector<vector<int>> Automata::get_N_generation(int N) {
+vector<vector<double>> Automata::get_N_generation(int N) {
 
     for (int i = 0; i < N; i++) {
         next_generation();

@@ -9,13 +9,13 @@
 
 Args::Args() {
     args.Nth_gen = 0;
-    args.CA_x = 100;
-    args.CA_y = 100;
+    args.CA_x = 50;
+    args.CA_y = 50;
     args.oil_mass = 790;
-    args.oil_x1 = 0;
-    args.oil_y1 = 0;
-    args.oil_x2 = 0;
-    args.oil_y2 = 0;
+    args.oil_x1 = 10;
+    args.oil_y1 = 10;
+    args.oil_x2 = 20;
+    args.oil_y2 = 20;
     args.land_x = 0;
     args.land_y = 0,
     args.land_r = 0,

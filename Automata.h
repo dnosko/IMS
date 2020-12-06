@@ -26,15 +26,14 @@ public:
         NoWind
     };
 
-    vector<vector<int>> oil_grid;
+    vector<vector<double>> oil_grid;
     WindDirection wind_direction;
-    int oil_cell_count;
 
 
     Automata(int x, int y, int max_mass, WindDirection wind);
     void init_oil(Coord c1, Coord c2);
     void init_borders(std::vector<Coord>);
-    vector<vector<int>> get_N_generation(int N);
+    vector<vector<double>> get_N_generation(int N);
 
 
 private:
@@ -51,8 +50,8 @@ private:
     vector<Coord> get_neighbors(Coord cell); // returns moore neighborhood
     vector<Coord> skip_neighbors(vector<Coord> neighbors);
     void next_generation();
-    int rules(int actual_cell_mass);
-    int wind(int actual_cell_mass);
+    double rules(double actual_cell_mass);
+    double wind(double actual_cell_mass);
     int cells_sum(unsigned from, unsigned to, int actual_cell_mass); // type = 'A'=adjustent cells or 'D'=diagonal
 };
 
