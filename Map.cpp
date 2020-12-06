@@ -9,8 +9,8 @@ using namespace std;
 
 Map::Map(int x, int y) {
 
-    if ( x < 0 || x > 70 || y < 0  || y > 70){
-        cout << "X and Y must be in <0-70> interval.";
+    if ( x < 0 || x > 100 || y < 0  || y > 100){
+        cout << "X and Y must be in <0-100> interval.";
         exit(1);
     }
     width = x;
@@ -32,10 +32,10 @@ void Map::show_map() {
 
 void Map::show_orientation() {
 
-    cout << "Map orientation: " << "\n";
-    cout << "                 " << "N" << "\n";
-    cout << "               W " << "X" << " E" << "\n";
-    cout << "                 " << "S" << "\n";
+    cout << "\n Map orientation: ";
+    cout << "\t " << "N" << "\n";
+    cout << "\t               W " << "X" << " E" << "\n";
+    cout << "\t                 " << "S" << "\n\n";
 }
 
 void Map::add_oil(vector<vector<int>> oil, int max_mass) {

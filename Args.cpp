@@ -8,8 +8,8 @@
 
 Args::Args() {
     args.Nth_gen = 0;
-    args.CA_x = 50;
-    args.CA_y = 70;
+    args.CA_x = 100;
+    args.CA_y = 100;
     args.oil_mass = 790;
     args.oil_x1 = 10;
     args.oil_y1 = 10;
