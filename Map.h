@@ -19,11 +19,11 @@ public:
     void add_oil(vector<vector<int>> oil, int max_mass); // adds oil to map
 
 private:
-    void init_map();
-    void show_orientation();
     int width;
     int height;
     vector<vector<char>> map_grid;
+    void init_map();
+    void show_orientation();
 };
 
 
