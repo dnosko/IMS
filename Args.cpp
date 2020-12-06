@@ -19,7 +19,7 @@ Args::Args() {
     args.land_x = 0;
     args.land_y = 0;
     args.land_r = 0;
-    args.temp = 20;
+    args.temp = -1;
     args.wind = 4;
 }
 

@@ -7,18 +7,20 @@
 #include "Automata.h"
 
 #define SKIP -2
-#define time 1 // in hours
+#define KELVIN 273.15
 
 Automata::Automata(int x, int y, int max_mass, WindDirection wind, int temperature) {
     rows = y;
     cols = x;
     max_oil = max_mass;
     wind_direction = wind;
-    T = temperature;
+    T = temperature + KELVIN;
+    if (temperature != -1) {
+        evap = true;
+    }
 }
 
 void Automata::init_oil(Coord c1, Coord c2) {
-    //TODO oil cell count na zaciatku
 
     for (int y = 0; y < rows; y++) {
         vector<double> cell;
@@ -114,18 +116,18 @@ void Automata::next_generation() {
 }
 
 double Automata::rules(double actual_cell_mass) {
-    double evap = evaporation(actual_cell_mass);
-    int new_mass;
+    double evap = evaporation();
+    double new_mass;
 
     new_mass = wind(actual_cell_mass) - evap;
 
-    int new_mass_debug = wind(actual_cell_mass);
-    cout <<"*"<< new_mass << "-" <<  new_mass_debug<< "*";
+    double new_mass_debug = wind(actual_cell_mass);
 
     if (new_mass > max_oil)
         new_mass = max_oil;
     if (new_mass < 0)
         new_mass = 0;
+
     return new_mass;
 }
 
@@ -141,10 +143,13 @@ double Automata::wind(double actual_cell_mass) {
     return result;
 }
 
-double Automata::evaporation(double actual_cell_mass) {
+double Automata::evaporation() {
 
-    double Ev = actual_cell_mass*T*log(time);
-    return Ev;
+    if (evap) {
+        return p*tm*T;
+    }
+    else
+        return 0;
 }
 
 int Automata::cells_sum(unsigned from, unsigned to, int actual_cell_mass) {

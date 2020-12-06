@@ -40,11 +40,15 @@ private:
     int rows;
     int cols;
     int max_oil;
+    bool evap = false;
 
     //constants
     float m = 0.098;  // spreading in the four adjacent cells
     float d = 0.0176; // spreading constant for diagonal cells
-    double T; // temperature in °c
+    int tm = 1; // time constant
+    double p = 0.00035;
+
+    double T; // temperature in K
     vector<Coord> neighborhood;
 
 
@@ -53,7 +57,7 @@ private:
     void next_generation();
     double rules(double actual_cell_mass);
     double wind(double actual_cell_mass);
-    double evaporation(double actual_cell_mass);
+    double evaporation();
     int cells_sum(unsigned from, unsigned to, int actual_cell_mass); // type = 'A'=adjustent cells or 'D'=diagonal
 };
 
