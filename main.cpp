@@ -79,8 +79,8 @@ int main(int argc, char* argv[]) {
     std::cout << "Wind direction: " << m[static_cast<Automata::WindDirection>(arguments.wind)] << "\n";
     std::cout << "Oil at the start in: " << oil_cell_begin << " cells \n";
     std::cout << "Oil at the end in: " << map.oil_count << " cells \n";
-    std::cout << "Mass at the start: " << std::setprecision(9) << mass_begin << "\n";
-    std::cout << "Mass at the end: " << std::setprecision(9) << map.mass << "\n";
+    std::cout << "Mass at the start: " << std::setprecision(9) << mass_begin << " kg \n";
+    std::cout << "Mass at the end: " << std::setprecision(9) << map.mass << " kg \n";
     return 0;
 }
 
