@@ -43,6 +43,7 @@ void Map::add_oil(vector<vector<double>> oil, int max_mass) {
 
     int x_size = oil.size();
     int y_size = oil.front().size();
+    mass = 0;
 
     for(int x = 0; x < x_size; x++){
         for (int y = 0; y < y_size; y++) {
@@ -54,10 +55,12 @@ void Map::add_oil(vector<vector<double>> oil, int max_mass) {
                 if (cell > half_mass ) {
                     map_grid[x][y] = 'X'; //lots of oil
                     oil_count++;
+                    mass += cell;
                 }
                 else if(cell > 0 && cell <= half_mass ){
                     map_grid[x][y] = 'x'; //some oil
                     oil_count++;
+                    mass += cell;
                 }
                 else if (cell > -1)
                     map_grid[x][y] = ' '; // water

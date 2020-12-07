@@ -14,6 +14,7 @@ using Coord = pair<int, int>;
 class Map {
 public:
     int oil_count = 0;
+    double mass;
 
     Map(int x, int y);
     void show_map();

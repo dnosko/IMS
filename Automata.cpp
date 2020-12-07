@@ -121,7 +121,6 @@ double Automata::rules(double actual_cell_mass) {
 
     new_mass = wind(actual_cell_mass) - evap;
 
-    double new_mass_debug = wind(actual_cell_mass);
 
     if (new_mass > max_oil)
         new_mass = max_oil;
@@ -184,6 +183,7 @@ vector<vector<double>> Automata::get_N_generation(int N) {
 
     return oil_grid;
 }
+
 
 
 
