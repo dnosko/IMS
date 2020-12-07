@@ -8,7 +8,7 @@
 #include "Automata.h"
 
 Args::Args() {
-    args.Nth_gen = 0;
+    args.Nth_gen = 1;
     args.CA_x = 50;
     args.CA_y = 50;
     args.oil_mass = 790;
@@ -28,11 +28,6 @@ Arguments Args::parseArgs(int argc, char **argv) {
     int c;
     int param;
     while ((c = getopt (argc, argv, "N:x:y:o:k:l:m:n:i:j:r:t:w:h")) != -1) {
-        param = atoi(optarg);
-        if(param < 0){
-            std::cout << char(c) << " value must be greater, equal to 0";
-            exit(1);
-        }
         switch(c){
             case 'N':
                 args.Nth_gen = atoi(optarg);
@@ -85,6 +80,11 @@ Arguments Args::parseArgs(int argc, char **argv) {
                 std::cout << "Invalid arguments!\n";
                 help();
                 exit(0);
+        }
+        param = atoi(optarg);
+        if(param < 0){
+            std::cout << char(c) << " value must be greater, equal to 0";
+            exit(1);
         }
     }
     return args;

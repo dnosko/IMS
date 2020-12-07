@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 
 #include "Map.h"
 #include "Automata.h"
@@ -62,6 +63,7 @@ int main(int argc, char* argv[]) {
     map.add_oil(oil, arguments.oil_mass);
     map.show_map();
     int oil_cell_begin = map.oil_count;
+    double mass_begin = map.mass;
 
     // generate next generations
     oil = automata.get_N_generation(arguments.Nth_gen);
@@ -77,6 +79,8 @@ int main(int argc, char* argv[]) {
     std::cout << "Wind direction: " << m[static_cast<Automata::WindDirection>(arguments.wind)] << "\n";
     std::cout << "Oil at the start in: " << oil_cell_begin << " cells \n";
     std::cout << "Oil at the end in: " << map.oil_count << " cells \n";
+    std::cout << "Mass at the start: " << std::setprecision(9) << mass_begin << " kg \n";
+    std::cout << "Mass at the end: " << std::setprecision(9) << map.mass << " kg \n";
     return 0;
 }
 

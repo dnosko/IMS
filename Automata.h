@@ -45,7 +45,7 @@ private:
     //constants
     float m = 0.098;  // spreading in the four adjacent cells
     float d = 0.0176; // spreading constant for diagonal cells
-    int tm = 1; // time constant
+    int tm = 1;
     double p = 0.00035;
 
     double T; // temperature in K
